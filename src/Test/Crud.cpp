@@ -52,14 +52,7 @@ namespace Test {
 			EXPECT_EQ(response.status_code(), status_codes::OK);
 		}).wait();
 	}
-	TEST_F(Crud, Student_OnDeletingInterconnected_Failure) {
-		auto req = uri_builder(local).append_path(U("student")).append_query(U("name=Michael"))
-			.append_query(U("family_name=Jackson"));
-		cli.make_request(methods::DEL, req.to_string(), 0).then([](http_response response) {
-			EXPECT_EQ(response.status_code(), status_codes::Forbidden); // NO DELETE CASCADE !
-		}).wait();
-	}
-	
+		
 
 	// working with COURSE entity
 	TEST_F(Crud, Course_OnCreating_Success) {
@@ -117,12 +110,6 @@ namespace Test {
 		auto body = web::json::value(U("student_ref=1"));
 		cli.make_request(methods::PUT, req.to_string(), body).then([](http_response response){
 			EXPECT_EQ(response.status_code(), status_codes::OK);
-		}).wait();
-	}
-	TEST_F(Crud, Class_OnDeletingInterconnected_Failure) {
-		auto req = uri_builder(local).append_path(U("class")).append_query(U("class_id=2"));
-		cli.make_request(methods::DEL, req.to_string(), 0).then([](http_response response) {
-			EXPECT_EQ(response.status_code(), status_codes::Forbidden); // NO DELETE CASCADE !
 		}).wait();
 	}
 	
@@ -184,12 +171,6 @@ namespace Test {
 		auto body = web::json::value(U("final_term=20"));
 		cli.make_request(methods::PUT, req.to_string(), body).then([](http_response response) {
 			EXPECT_EQ(response.status_code(), status_codes::OK);
-		}).wait();
-	}
-	TEST_F(Crud, Score_OnDeletingInterconnected_Failure) {
-		auto req = uri_builder(local).append_path(U("score")).append_query(U("score_id=1"));
-		cli.make_request(methods::DEL, req.to_string(), 0).then([](http_response response) {
-			EXPECT_EQ(response.status_code(), status_codes::Forbidden); // NO DELETE CASCADE !
 		}).wait();
 	}
 }

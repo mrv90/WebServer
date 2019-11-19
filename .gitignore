@@ -3,3 +3,7 @@
 ################################################################################
 
 /.vs/WebServer/v15
+/bin/Win32/Debug
+/Debug
+/intermediates
+/TestResults
