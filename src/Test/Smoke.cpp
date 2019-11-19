@@ -42,7 +42,7 @@ namespace Test {
 	TEST_F(Smoke, Class_OnDictatingId_Failure) {
 		auto req = uri_builder(local).append_path(U("class"));
 		auto body = web::json::value(U("class_id=4, course_ref=1, student_ref=1, score_ref=null"));
-		cli.make_request(methods::POST, req.to_string(), 0).then([](http_response response) {
+		cli.make_request(methods::POST, req.to_string(), body).then([](http_response response) {
 			EXPECT_EQ(response.status_code(), status_codes::Forbidden); // Forbidden for dictating id of new entity
 		}).wait();
 	}
@@ -50,7 +50,7 @@ namespace Test {
 	TEST_F(Smoke, Class_OnDoubleCreating_Failure) {
 		auto req = uri_builder(local).append_path(U("quiz"));
 		auto body = web::json::value(U("class_ref=1, student_ref=1, score=17.5"));
-		cli.make_request(methods::POST, req.to_string(), 0).then([](http_response response) {
+		cli.make_request(methods::POST, req.to_string(), body).then([](http_response response) {
 			EXPECT_EQ(response.status_code(), status_codes::Conflict); // Conflict for already existing data
 		}).wait();
 	}
@@ -58,7 +58,7 @@ namespace Test {
 	TEST_F(Smoke, Score_OnUpdatingNonExisting_Failure) {
 		auto req = uri_builder(local).append_path(U("score")).append_query(U("class_ref=4"));
 		auto body = web::json::value(U("final_term=20"));
-		cli.make_request(methods::PUT, req.to_string(), 0).then([](http_response response) {
+		cli.make_request(methods::PUT, req.to_string(), body).then([](http_response response) {
 			EXPECT_EQ(response.status_code(), status_codes::NotFound); // NotFound on put requst using a non-existing data
 		}).wait();
 	}
