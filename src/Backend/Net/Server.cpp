@@ -63,6 +63,9 @@ void BackEnd::Net::Server::handle_get(http_request req)
 void BackEnd::Net::Server::handle_post(http_request req)
 {
 	ucout << req.to_string() << endl;
+
+	if (contains_invalid_uri(req))
+		req.reply(status_codes::Forbidden);
 	
 	std::string create = sql_builder().to_create_or_replace_cmd(req);
 	
