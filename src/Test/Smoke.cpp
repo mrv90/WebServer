@@ -40,8 +40,8 @@ namespace Test {
 	}
 	
 	TEST_F(Smoke, Class_OnDictatingId_Failure) {
-		auto req = uri_builder(local).append_path(U("class")).append_path(U("class_id=4"))
-			.append_path(U("course_ref=1")).append_path(U("student_ref=1")).append_path(U("score_ref=null"));
+		auto req = uri_builder(local).append_path(U("class")).append_query(U("class_id=4"))
+			.append_query(U("course_ref=1")).append_query(U("student_ref=1")).append_query(U("score_ref=null"));
 		cli.make_request(methods::POST, req.to_string(), 0).then([](http_response response) {
 			EXPECT_EQ(response.status_code(), status_codes::Forbidden); // Forbidden for dictating id of new entity
 		}).wait();
