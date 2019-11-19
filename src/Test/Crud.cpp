@@ -78,13 +78,7 @@ namespace Test {
 			EXPECT_EQ(response.status_code(), status_codes::OK);
 		}).wait();
 	}
-	TEST_F(Crud, Course_OnDeletingInterconnected_Failure) {
-		auto req = uri_builder(local).append_path(U("course")).append_query(U("name=Math"));
-		cli.make_request(methods::DEL, req.to_string(), 0).then([](http_response response) {
-			EXPECT_EQ(response.status_code(), status_codes::Forbidden); // NO DELETE CASCADE !
-		}).wait();
-	}
-	
+		
 
 	// woring with CLASS entity
 	TEST_F(Crud, Class_OnCreating_Success) {
