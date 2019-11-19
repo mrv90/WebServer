@@ -155,7 +155,7 @@ namespace Test {
 			EXPECT_EQ(response.status_code(), status_codes::OK); 
 			response.extract_json().then([](web::json::value result) {
 				web::json::value expected = web::json::value::parse(L"{\"score_id\": 1, \"class_ref\": 1, \"student_ref\": 1,\
-					 \"final_term\": 17");
+					 \"sem_avg\": 12.5, \"mid_term\": 15, \"final_term\": 17}");
 				EXPECT_EQ(result.serialize(), expected.serialize());
 			});
 		}).wait();
