@@ -105,8 +105,8 @@ int BackEnd::Data::DataContext::ExeQuery(const std::string& query, web::json::va
 				break;
 			case (SQLITE_FLOAT):
 				(0 < i && i < sqlite3_data_count(stmt)) ?
-					istrm << L", \"" << sqlite3_column_name(stmt, i) << L"\": \"" << sqlite3_column_double(stmt, i) << L"\"" :
-					istrm << L"\"" << sqlite3_column_name(stmt, i) << L"\": \"" << sqlite3_column_double(stmt, i) << L"\"";
+					istrm << L", \"" << sqlite3_column_name(stmt, i) << L"\": " << sqlite3_column_double(stmt, i) :
+					istrm << L"\"" << sqlite3_column_name(stmt, i) << L"\": " << sqlite3_column_double(stmt, i);
 				break;
 			case (SQLITE_BLOB):
 				(0 < i && i < sqlite3_data_count(stmt)) ?
