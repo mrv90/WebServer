@@ -145,15 +145,15 @@ bool BackEnd::Data::DataContext::data_exist(const std::string& query) {
 	// TODO: ucout result of exequery
 	if (SQLITE_OK != (ret = sqlite3_prepare_v2(con, query.c_str(), -1, &stmt, NULL))) {
 		auto err = sqlite3_errmsg(con);
-		return ret;
+		return false;
 	}
 
 	if (SQLITE_ROW == (ret = sqlite3_step(stmt)))
-		return SQLITE_OK;
+		return true;
 	
 	else {
 		auto err = sqlite3_errmsg(con);
-		return ret;
+		return false;
 	}
 
 	if (NULL != stmt)
