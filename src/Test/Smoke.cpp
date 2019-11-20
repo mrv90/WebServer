@@ -82,7 +82,7 @@ namespace Test {
 		cli.make_request(methods::OPTIONS, req.to_string(), 0).then([](http_response response) {
 			EXPECT_EQ(response.status_code(), status_codes::OK); // OK for OPTIONS 
 			response.extract_json().then([](web::json::value result) { // Allowd http verbs on resource
-				web::json::value expected = web::json::value::parse(L"{\"GET\", \"POST\", \"PUT\", \"PATCH\", \"DEL\", \"OPTIONS\", \"HEAD\"}");
+				web::json::value expected = web::json::value::parse(L"{\"Allow\":[\"GET\",\"POST\",\"PUT\",\"PATCH\",\"DEL\",\"OPTIONS\",\"HEAD\"]}");
 				EXPECT_EQ(result.serialize(), expected.serialize());
 			}).wait();
 		}).wait();

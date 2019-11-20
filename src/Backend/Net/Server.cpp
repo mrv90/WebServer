@@ -67,6 +67,11 @@ void BackEnd::Net::Server::handle_post(http_request req)
 	if (contains_invalid_uri(req))
 		req.reply(status_codes::Forbidden);
 	
+	std::string chk_exist = sql_builder().to_select_query(req);
+	web::json::value resp{};
+	if (data_cntx.ExeQuery(chk_exist, resp) == SQLITE_OK && resp.is_null() == false) // already_exist
+		req.reply(status_codes::Conflict);
+
 	std::string create = sql_builder().to_create_or_replace_cmd(req);
 	
 	answer_request(data_cntx.ExeCmd(create), req);
