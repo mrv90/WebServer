@@ -63,6 +63,7 @@ namespace Test {
 		}).wait();
 	}
 
+
 	TEST_F(Smoke, Student_OnRequestingHead_Success) {
 		auto req = uri_builder(local).append_path(U("student")).append_query(U("name=Ali"));
 		cli.make_request(methods::HEAD, req.to_string(), 0).then([](http_response response) {
