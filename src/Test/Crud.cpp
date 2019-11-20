@@ -120,8 +120,7 @@ namespace Test {
 		auto req = uri_builder(local).append_path(U("quiz")).append_query(U("class_ref=1"));
 		cli.make_request(methods::GET, req.to_string(), 0).then([](http_response response) {
 			response.extract_json().then([](web::json::value result) {
-				web::json::value expected = web::json::value::parse(L"{\"quiz_id\": 1, \
-					\"class_ref\": 1,\"student_ref\": 1");
+				web::json::value expected = web::json::value::parse(L"{\"class_ref\":1,\"quiz_id\":1,\"score\":17.5,\"student_ref\":1}");
 				EXPECT_EQ(result.serialize(), expected.serialize());
 			});
 		}).wait();
