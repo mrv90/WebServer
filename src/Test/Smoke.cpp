@@ -48,9 +48,9 @@ namespace Test {
 	}
 
 	TEST_F(Smoke, Class_OnDoubleCreating_Failure) {
-		auto req = uri_builder(local).append_path(U("quiz"));
-		auto body = web::json::value(U("class_ref=1, student_ref=1, score=17.5"));
-		cli.make_request(methods::POST, req.to_string(), body).then([](http_response response) {
+		auto req = uri_builder(local).append_path(U("quiz")).append_query(U("class_ref=1")).
+			append_query(U("student_ref=1")).append_query(U("score=17.5"));
+		cli.make_request(methods::POST, req.to_string(), 0).then([](http_response response) {
 			EXPECT_EQ(response.status_code(), status_codes::Conflict); // Conflict for already existing data
 		}).wait();
 	}
