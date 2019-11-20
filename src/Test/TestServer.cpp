@@ -24,5 +24,5 @@ void Test::TestServer::WriteSampleData()
 		  \
 		  INSERT INTO score VALUES (1, 1, 1, 12.5, 15, 17), (2, 1, 2, 17, 14, 20), (3, 1, 3, 19, 14, 18.25);";
 
-	data_cntx.ExeCmd(data);
+	data_cntx.exe_cmd(data);
 }
