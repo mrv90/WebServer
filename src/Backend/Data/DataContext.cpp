@@ -56,7 +56,7 @@ BackEnd::Data::DataContext::~DataContext()
 		auto err = sqlite3_errmsg(con);
 }
 
-int BackEnd::Data::DataContext::ExeCmd(const std::string& cmd)
+int BackEnd::Data::DataContext::exe_cmd(const std::string& cmd)
 {
 	int ret = -1;
 	char** errmsg = nullptr;
@@ -74,7 +74,7 @@ int BackEnd::Data::DataContext::ExeCmd(const std::string& cmd)
 	return ret;
 }
 
-int BackEnd::Data::DataContext::ExeQuery(const std::string& query, web::json::value &resp)
+int BackEnd::Data::DataContext::exe_query(const std::string& query, web::json::value &resp)
 {
 	int ret = -1;
 	sqlite3_stmt* stmt = NULL;
@@ -137,6 +137,8 @@ int BackEnd::Data::DataContext::ExeQuery(const std::string& query, web::json::va
 	return SQLITE_OK;
 }
 
+
+
 int BackEnd::Data::DataContext::ApplyDbStructure()
 {
 	// TODO: add exception 
@@ -173,7 +175,7 @@ int BackEnd::Data::DataContext::ApplyDbStructure()
 		);";
 
 	int ret = -1;
-	if (SQLITE_OK != (ret = ExeCmd(alter_db_structure))) {
+	if (SQLITE_OK != (ret = exe_cmd(alter_db_structure))) {
 		auto err = sqlite3_errmsg(con);
 		return ret;
 	}

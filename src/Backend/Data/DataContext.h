@@ -13,8 +13,8 @@ namespace BackEnd {
 			DataContext& operator=(DataContext&& other);
 			~DataContext();
 
-			int ExeCmd(const std::string& cmd);
-			int ExeQuery(const std::string& query, web::json::value &resp);
+			int exe_cmd(const std::string& cmd);
+			int exe_query(const std::string& query, web::json::value &resp);
 		
 		protected:
 			DataContext();
