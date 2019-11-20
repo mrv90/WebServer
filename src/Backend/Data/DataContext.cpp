@@ -137,6 +137,28 @@ int BackEnd::Data::DataContext::exe_query(const std::string& query, web::json::v
 	return SQLITE_OK;
 }
 
+bool BackEnd::Data::DataContext::data_exist(const std::string& query) {
+	int ret = -1;
+	sqlite3_stmt* stmt = NULL;
+
+	// TODO: add exception 
+	// TODO: ucout result of exequery
+	if (SQLITE_OK != (ret = sqlite3_prepare_v2(con, query.c_str(), -1, &stmt, NULL))) {
+		auto err = sqlite3_errmsg(con);
+		return ret;
+	}
+
+	if (SQLITE_ROW == (ret = sqlite3_step(stmt)))
+		return SQLITE_OK;
+	
+	else {
+		auto err = sqlite3_errmsg(con);
+		return ret;
+	}
+
+	if (NULL != stmt)
+		sqlite3_finalize(stmt);
+}
 
 
 int BackEnd::Data::DataContext::ApplyDbStructure()
