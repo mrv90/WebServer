@@ -47,7 +47,7 @@ namespace Test {
 		}).wait();
 	}
 
-	TEST_F(Smoke, Class_OnDoubleCreating_Failure) {
+	TEST_F(Smoke, Quiz_OnDoubleCreating_Failure) {
 		auto req = uri_builder(local).append_path(U("quiz")).append_query(U("class_ref=1")).
 			append_query(U("student_ref=1")).append_query(U("score=17.5"));
 		cli.make_request(methods::POST, req.to_string(), 0).then([](http_response response) {
