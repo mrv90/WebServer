@@ -55,6 +55,8 @@ void BackEnd::Net::Server::handle_get(http_request req)
 		req.reply(status_codes::MethodNotAllowed);
 
 	std::string get = sql_builder().to_select_query(req);
+	if (data_cntx.data_exist(get) == false)
+		req.reply(status_codes::NotFound);
 			
 	web::json::value resp{};
 	answer_request(data_cntx.exe_query(get, resp), req, resp);
