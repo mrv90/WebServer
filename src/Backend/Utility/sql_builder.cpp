@@ -17,7 +17,12 @@ std::string sql_builder::to_select_query(const web::http::http_request& req)
 	std::wstring sql(L"SELECT ");
 
 	auto pathes = req.request_uri().split_path(req.request_uri().path());
-	add_pathes(req, sql);
+	
+	if (pathes.size() > 1)
+		add_pathes(req, sql);
+	else
+		sql.append(L"*");
+		
 	sql.append(L" FROM " + pathes.at(0));
 	add_queries(req, sql);
 	return std::string(sql.begin(), sql.end());
@@ -112,7 +117,7 @@ void sql_builder::add_queries(const web::http::http_request& req, std::wstring& 
 
 std::wstring sql_builder::wrap_by_quotation(const std::wstring& equation)
 {
-	boost::regex after_equal_sign("((?<==)\\w+)");
+	boost::regex after_equal_sign("((?<==)[a-zA-Z0-9.]+)"); // we have float in data; 17.5 has single dot
 	std::string result = boost::regex_replace(
 		std::string(equation.begin(), equation.end()), after_equal_sign, "'$0'");
 
