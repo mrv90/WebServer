@@ -63,13 +63,6 @@ namespace Test {
 		}).wait();
 	}
 
-	TEST_F(Smoke, Course_OnDeletingBaseData_Failure) {
-		auto req = uri_builder(local).append_path(U("course")).append_query(U("name=Math"));
-		cli.make_request(methods::DEL, req.to_string(), 0).then([](http_response response) {
-			EXPECT_EQ(response.status_code(), status_codes::Forbidden); // Forbidden on base data that DELETE_CASCADE_POLICY is forbidden
-		}).wait();
-	}
-
 	TEST_F(Smoke, Student_OnRequestingHead_Success) {
 		auto req = uri_builder(local).append_path(U("student")).append_query(U("name=Ali"));
 		cli.make_request(methods::HEAD, req.to_string(), 0).then([](http_response response) {
