@@ -39,14 +39,14 @@ namespace Test {
 		}).wait();
 	}
 	TEST_F(Crud, Student_OnUpdating_Success) {
-		auto req = uri_builder(local).append_path(U("student")).append_query(U("name=Naseri"));
+		auto req = uri_builder(local).append_path(U("student")).append_query(U("family_name=Naseri"));
 		auto body = web::json::value(U("name=Alireza"));
 		cli.make_request(methods::PUT, req.to_string(), body).then([](http_response response) {
 			EXPECT_EQ(response.status_code(), status_codes::OK);
 		}).wait();
 	}
 	TEST_F(Crud, Student_OnPatching_Success) {
-		auto req = uri_builder(local).append_path(U("student")).append_query(U("name=Naseri"));
+		auto req = uri_builder(local).append_path(U("student")).append_query(U("family_name=Naseri"));
 		auto body = web::json::value(U("name=Alireza"));
 		cli.make_request(methods::PATCH, req.to_string(), body).then([](http_response response) {
 			EXPECT_EQ(response.status_code(), status_codes::OK);
