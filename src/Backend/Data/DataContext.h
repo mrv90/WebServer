@@ -15,7 +15,7 @@ namespace BackEnd {
 
 			int exe_cmd(const std::string& cmd);
 			int exe_query(const std::string& query, web::json::value &resp);
-			bool data_exist(const std::string& query);
+			bool verify_query_and_data(const std::string& query);
 		
 		protected:
 			DataContext();
