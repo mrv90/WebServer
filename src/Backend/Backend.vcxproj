@@ -159,6 +159,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Data\DataContext.h" />
+    <ClInclude Include="Data\exception.h" />
     <ClInclude Include="Data\Type.h" />
     <ClInclude Include="Net\Client.h" />
     <ClInclude Include="Net\Server.h" />

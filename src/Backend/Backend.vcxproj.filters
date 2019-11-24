@@ -50,5 +50,8 @@
     <ClInclude Include="Utility\sql_builder.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Data\exception.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
