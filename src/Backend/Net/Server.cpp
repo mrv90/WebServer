@@ -55,11 +55,22 @@ void BackEnd::Net::Server::handle_get(http_request req)
 		req.reply(status_codes::MethodNotAllowed);
 
 	std::string get = sql_builder().to_select_query(req);
-	if (data_cntx.data_exist(get) == false)
-		req.reply(status_codes::NotFound);
-			
-	web::json::value resp{};
-	answer_request(data_cntx.exe_query(get, resp), req, resp);
+	try
+	{
+		if (data_cntx.verify_query_and_data(get)) {
+			web::json::value resp{};
+			answer_request(data_cntx.exe_query(get, resp), req, resp);
+		}
+	}
+	catch (const BackEnd::Data::exception& e)
+	{
+		if (e.error_type() == SQLITE_ERROR)
+			req.reply(status_codes::BadRequest);
+		else if (e.error_type() == SQLITE_DONE)
+			req.reply(status_codes::NotFound);
+		else
+			req.reply(status_codes::InternalError);
+	}
 }
 
 void BackEnd::Net::Server::handle_post(http_request req)
@@ -79,7 +90,7 @@ void BackEnd::Net::Server::handle_put(http_request req)
 	ucout << req.to_string() << endl;
 	
 	std::string chk_exist = sql_builder().to_select_query(req);
-	if (data_cntx.data_exist(chk_exist) == false)
+	if (data_cntx.verify_query_and_data(chk_exist) == false)
 		req.reply(status_codes::NotFound);
 	
 	std::wstring req_body = L"";
@@ -111,7 +122,7 @@ void BackEnd::Net::Server::handle_delete(http_request req)
 	ucout << req.to_string() << endl;
 	
 	std::string chk_exist = sql_builder().to_select_query(req);
-	if (data_cntx.data_exist(chk_exist) == false)
+	if (data_cntx.verify_query_and_data(chk_exist) == false)
 		req.reply(status_codes::NotFound);
 	
 	std::string del = sql_builder().to_delete_cmd(req);

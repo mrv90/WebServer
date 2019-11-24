@@ -2,6 +2,7 @@
 #include "pch.h"
 #include "../Utility/sql_builder.h"
 #include "../Data/DataContext.h"
+#include "../../Backend/Data/exception.h"
 		
 using namespace std;
 using namespace web;
