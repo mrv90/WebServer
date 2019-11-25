@@ -157,6 +157,20 @@ bool BackEnd::Data::DataContext::verify_query_and_data(const std::string& query)
 	}
 }
 
+bool BackEnd::Data::DataContext::verify_data(const std::string& query) {
+	int ret = -1;
+	sqlite3_stmt* stmt = NULL;
+
+	// TODO: ucout result of exequery
+	if (SQLITE_OK != (ret = sqlite3_prepare_v2(con, query.c_str(), -1, &stmt, NULL))) {
+		return false;
+	}
+
+	if (SQLITE_ROW == (ret = sqlite3_step(stmt)))
+		return true;
+	else
+		return false;
+}
 
 int BackEnd::Data::DataContext::ApplyDbStructure()
 {
