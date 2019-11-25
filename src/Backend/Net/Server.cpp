@@ -51,7 +51,7 @@ void BackEnd::Net::Server::handle_get(http_request req)
 {
 	ucout << req.to_string() << endl;
 	
-	if (contains_invalid_uri(req))
+	if (contains_id(req))
 		req.reply(status_codes::MethodNotAllowed);
 
 	std::string get = sql_builder().to_select_query(req);
@@ -77,7 +77,7 @@ void BackEnd::Net::Server::handle_post(http_request req)
 {
 	ucout << req.to_string() << endl;
 
-	if (contains_invalid_uri(req))
+	if (contains_id(req))
 		req.reply(status_codes::Forbidden);
 	
 	std::string create = sql_builder().to_create_or_replace_cmd(req);
@@ -179,7 +179,7 @@ void BackEnd::Net::Server::answer_request(const int query_status, const web::htt
 	}
 }
 
-bool BackEnd::Net::Server::contains_invalid_uri(const web::http::http_request& req) {
+bool BackEnd::Net::Server::contains_id(const web::http::http_request& req) {
 	
 	const boost::wregex id(L"_id");
 	return boost::regex_search(req.absolute_uri().to_string(), id);

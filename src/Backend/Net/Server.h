@@ -39,7 +39,7 @@ namespace BackEnd {
 			virtual void handle_head(http_request req);
 
 			void answer_request(const int query_status, const web::http::http_request & req, const web::json::value & resp = NULL);
-			bool contains_invalid_uri(const web::http::http_request& req);
+			bool contains_id(const web::http::http_request& req);
 
 			http_listener http_listener;
 		};
