@@ -168,8 +168,10 @@ bool BackEnd::Data::DataContext::verify_data(const std::string& query) {
 
 	if (SQLITE_ROW == (ret = sqlite3_step(stmt)))
 		return true;
-	else
+	else if (SQLITE_DONE == (ret = sqlite3_step(stmt)))
 		return false;
+	else
+		throw std::exception("unhandeled sqlite error code");
 }
 
 int BackEnd::Data::DataContext::ApplyDbStructure()
