@@ -4,7 +4,7 @@
 BackEnd::Net::Server::Server(const web::uri & uri, bool in_memory_db) : http_listener(uri), data_cntx(std::move(BackEnd::Data::DataContext(in_memory_db)))
 {
 	http_listener.support(methods::GET, std::bind(&Server::handle_get, this, std::placeholders::_1));
-	http_listener.support(methods::POST,std::bind(&Server::handle_post, this, std::placeholders::_1));
+	http_listener.support(methods::POST, std::bind(&Server::handle_post, this, std::placeholders::_1));
 	http_listener.support(methods::PUT, std::bind(&Server::handle_put, this, std::placeholders::_1));
 	http_listener.support(methods::PATCH, std::bind(&Server::handle_patch, this, std::placeholders::_1));
 	http_listener.support(methods::DEL, std::bind(&Server::handle_delete, this, std::placeholders::_1));
@@ -50,7 +50,7 @@ BackEnd::Net::Server::~Server()
 void BackEnd::Net::Server::handle_get(http_request req)
 {
 	ucout << req.to_string() << endl;
-	
+
 	std::string get = sql_builder().to_select_query(req);
 	try
 	{
@@ -75,28 +75,32 @@ void BackEnd::Net::Server::handle_post(http_request req)
 	ucout << req.to_string() << endl;
 
 	if (contains_id(req))
-		req.reply(status_codes::Forbidden);
-	
+		req.reply(status_codes::MethodNotAllowed);
+
+	std::string chk_exist = sql_builder().to_select_query(req);
+	if (data_cntx.verify_query_and_data(chk_exist))
+		req.reply(status_codes::Conflict);
+
 	std::string create = sql_builder().to_create_or_replace_cmd(req);
-	
+
 	answer_request(data_cntx.exe_cmd(create), req);
 }
 
 void BackEnd::Net::Server::handle_put(http_request req)
 {
 	ucout << req.to_string() << endl;
-	
+
 	std::string chk_exist = sql_builder().to_select_query(req);
 	if (data_cntx.verify_query_and_data(chk_exist) == false)
 		req.reply(status_codes::NotFound);
-	
+
 	std::wstring req_body = L"";
 	auto body = req.extract_string().then([&req_body](std::wstring ret_body) {
 		req_body = ret_body;
 		req_body.erase(std::remove(req_body.begin(), req_body.end(), '\"'), req_body.end());
 	}).wait();
 	std::string update = sql_builder().to_update_cmd(req, req_body);
-	
+
 	answer_request(data_cntx.exe_cmd(update), req);
 }
 
@@ -117,11 +121,11 @@ void BackEnd::Net::Server::handle_patch(http_request req)
 void BackEnd::Net::Server::handle_delete(http_request req)
 {
 	ucout << req.to_string() << endl;
-	
+
 	std::string chk_exist = sql_builder().to_select_query(req);
 	if (data_cntx.verify_query_and_data(chk_exist) == false)
 		req.reply(status_codes::NotFound);
-	
+
 	std::string del = sql_builder().to_delete_cmd(req);
 	answer_request(data_cntx.exe_cmd(del), req);
 }
@@ -164,7 +168,7 @@ void BackEnd::Net::Server::answer_request(const int query_status, const web::htt
 		else if (req.method() == methods::OPTIONS)
 			req.reply(status_codes::OK, resp);
 	}
-		break;
+					  break;
 	case (SQLITE_MISUSE || SQLITE_ERROR):
 		req.reply(status_codes::BadRequest);
 		break;
@@ -177,7 +181,7 @@ void BackEnd::Net::Server::answer_request(const int query_status, const web::htt
 }
 
 bool BackEnd::Net::Server::contains_id(const web::http::http_request& req) {
-	
+
 	const boost::wregex id(L"_id");
 	return boost::regex_search(req.absolute_uri().to_string(), id);
 }
