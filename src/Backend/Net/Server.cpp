@@ -51,9 +51,6 @@ void BackEnd::Net::Server::handle_get(http_request req)
 {
 	ucout << req.to_string() << endl;
 	
-	if (contains_id(req))
-		req.reply(status_codes::MethodNotAllowed);
-
 	std::string get = sql_builder().to_select_query(req);
 	try
 	{
