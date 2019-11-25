@@ -135,11 +135,12 @@ void BackEnd::Net::Server::handle_delete(http_request req)
 	ucout << req.to_string() << endl;
 
 	std::string chk_exist = sql_builder().to_select_query(req);
-	if (data_cntx.verify_query_and_data(chk_exist) == false)
+	if (data_cntx.verify_query_and_data(chk_exist)) {
+		std::string del = sql_builder().to_delete_cmd(req);
+		answer_request(data_cntx.exe_cmd(del), req);
+	}
+	else
 		req.reply(status_codes::NotFound);
-
-	std::string del = sql_builder().to_delete_cmd(req);
-	answer_request(data_cntx.exe_cmd(del), req);
 }
 
 void BackEnd::Net::Server::handle_options(http_request req)
