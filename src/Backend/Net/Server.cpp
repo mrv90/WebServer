@@ -90,18 +90,30 @@ void BackEnd::Net::Server::handle_put(http_request req)
 {
 	ucout << req.to_string() << endl;
 
-	std::string chk_exist = sql_builder().to_select_query(req);
-	if (data_cntx.verify_query_and_data(chk_exist) == false)
-		req.reply(status_codes::NotFound);
+	try
+	{
+		std::string chk_exist = sql_builder().to_select_query(req);
+		if (data_cntx.verify_query_and_data(chk_exist) == false)
+			req.reply(status_codes::NotFound);
 
-	std::wstring req_body = L"";
-	auto body = req.extract_string().then([&req_body](std::wstring ret_body) {
-		req_body = ret_body;
-		req_body.erase(std::remove(req_body.begin(), req_body.end(), '\"'), req_body.end());
-	}).wait();
-	std::string update = sql_builder().to_update_cmd(req, req_body);
+		std::wstring req_body = L"";
+		auto body = req.extract_string().then([&req_body](std::wstring ret_body) {
+			req_body = ret_body;
+			req_body.erase(std::remove(req_body.begin(), req_body.end(), '\"'), req_body.end());
+		}).wait();
+		std::string update = sql_builder().to_update_cmd(req, req_body);
 
-	answer_request(data_cntx.exe_cmd(update), req);
+		answer_request(data_cntx.exe_cmd(update), req);
+	}
+	catch (const BackEnd::Data::exception& e)
+	{
+		if (e.error_type() == SQLITE_ERROR)
+			req.reply(status_codes::BadRequest);
+		else if (e.error_type() == SQLITE_DONE)
+			req.reply(status_codes::NotFound);
+		else
+			req.reply(status_codes::InternalError);
+	}
 }
 
 void BackEnd::Net::Server::handle_patch(http_request req)
