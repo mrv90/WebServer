@@ -78,8 +78,8 @@ void BackEnd::Net::Server::handle_post(http_request req)
 		req.reply(status_codes::MethodNotAllowed);
 
 	std::string chk_exist = sql_builder().to_select_query(req);
-	if (data_cntx.verify_query_and_data(chk_exist))
-		req.reply(status_codes::Conflict);
+	if (data_cntx.verify_data(chk_exist)) 
+		req.reply(status_codes::Conflict); // duplicated data
 
 	std::string create = sql_builder().to_create_or_replace_cmd(req);
 
