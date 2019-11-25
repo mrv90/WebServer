@@ -40,9 +40,8 @@ namespace Test {
 		}).wait();
 	}
 
-	TEST_F(Smoke, Quiz_OnDoubleCreating_Failure) {
-		auto req = uri_builder(local).append_path(U("quiz")).append_query(U("class_ref=1")).
-			append_query(U("student_ref=1")).append_query(U("score=17.5"));
+	TEST_F(Smoke, Course_OnDoubleCreating_Failure) {
+		auto req = uri_builder(local).append_path(U("course")).append_query(U("name=Physics"));
 		cli.make_request(methods::POST, req.to_string(), 0).then([](http_response response) {
 			EXPECT_EQ(response.status_code(), status_codes::Conflict); // Conflict for already existing data
 		}).wait();
