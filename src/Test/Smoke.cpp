@@ -32,13 +32,6 @@ namespace Test {
 		}).wait();
 	}
 
-	TEST_F(Smoke, Course_OnIdRequesting_Failure) {
-		auto req = uri_builder(local).append_path(U("course")).append_path(U("course_id")).append_query(U("name=Math"));
-		cli.make_request(methods::GET, req.to_string(), 0).then([](http_response response) {
-			EXPECT_EQ(response.status_code(), status_codes::MethodNotAllowed); // MethodNotAllowed for explicit request of entity id
-		}).wait();
-	}
-	
 	TEST_F(Smoke, Class_OnDictatingId_Failure) {
 		auto req = uri_builder(local).append_path(U("class")).append_query(U("class_id=4"))
 			.append_query(U("course_ref=1")).append_query(U("student_ref=1")).append_query(U("score_ref=null"));
