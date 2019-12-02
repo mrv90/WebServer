@@ -49,7 +49,7 @@ BackEnd::Net::Server::~Server()
 
 void BackEnd::Net::Server::handle_get(http_request req)
 {
-	//ucout << req.to_string() << endl;
+	print_current_date_time();
 
 	std::string get = sql_builder().to_select_query(req);
 	try
@@ -72,7 +72,7 @@ void BackEnd::Net::Server::handle_get(http_request req)
 
 void BackEnd::Net::Server::handle_post(http_request req)
 {
-	//ucout << req.to_string() << endl;
+	print_current_date_time();
 
 	if (contains_id(req))
 		req.reply(status_codes::MethodNotAllowed);
@@ -88,7 +88,7 @@ void BackEnd::Net::Server::handle_post(http_request req)
 
 void BackEnd::Net::Server::handle_put(http_request req)
 {
-	//ucout << req.to_string() << endl;
+	print_current_date_time();
 
 	try
 	{
@@ -118,7 +118,7 @@ void BackEnd::Net::Server::handle_put(http_request req)
 
 void BackEnd::Net::Server::handle_patch(http_request req)
 {
-	//ucout << req.to_string() << endl;
+	print_current_date_time();
 
 	std::wstring req_body = L"";
 	auto body = req.extract_string().then([&req_body](std::wstring ret_body) {
@@ -132,7 +132,7 @@ void BackEnd::Net::Server::handle_patch(http_request req)
 
 void BackEnd::Net::Server::handle_delete(http_request req)
 {
-	//ucout << req.to_string() << endl;
+	print_current_date_time();
 
 	std::string chk_exist = sql_builder().to_select_query(req);
 	if (data_cntx.verify_query_and_data(chk_exist)) {
@@ -145,7 +145,7 @@ void BackEnd::Net::Server::handle_delete(http_request req)
 
 void BackEnd::Net::Server::handle_options(http_request req)
 {
-	//ucout << req.to_string() << endl;
+	print_current_date_time();
 
 	std::wstring verbs = sql_builder().to_allowed_verbs(req);
 	answer_request(SQLITE_OK, req, web::json::value::parse(verbs));
@@ -153,7 +153,7 @@ void BackEnd::Net::Server::handle_options(http_request req)
 
 void BackEnd::Net::Server::handle_head(http_request req)
 {
-	//ucout << req.to_string() << endl;
+	print_current_date_time();
 
 	std::string select = sql_builder().to_select_query(req);
 
@@ -204,4 +204,9 @@ bool BackEnd::Net::Server::contains_id(const web::http::http_request& req) {
 
 	const boost::wregex id(L"_id");
 	return boost::regex_search(req.absolute_uri().to_string(), id);
+}
+
+void BackEnd::Net::Server::print_current_date_time() {
+	auto local = boost::posix_time::second_clock::local_time();
+	ucout << local.date() << " : " << local.time_of_day() << endl;
 }

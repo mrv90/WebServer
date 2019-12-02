@@ -40,6 +40,7 @@ namespace BackEnd {
 
 			void answer_request(const int query_status, const web::http::http_request & req, const web::json::value & resp = NULL);
 			bool contains_id(const web::http::http_request& req);
+			void print_current_date_time();
 
 			http_listener http_listener;
 		};
