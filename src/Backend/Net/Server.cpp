@@ -119,7 +119,7 @@ void BackEnd::Net::Server::handle_put(http_request req)
 void BackEnd::Net::Server::handle_patch(http_request req)
 {
 	print_current_date_time();
-
+	
 	std::wstring req_body = L"";
 	auto body = req.extract_string().then([&req_body](std::wstring ret_body) {
 		req_body = ret_body;
