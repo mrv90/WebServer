@@ -49,7 +49,7 @@ BackEnd::Net::Server::~Server()
 
 void BackEnd::Net::Server::handle_get(http_request req)
 {
-	ucout << req.to_string() << endl;
+	//ucout << req.to_string() << endl;
 
 	std::string get = sql_builder().to_select_query(req);
 	try
@@ -72,7 +72,7 @@ void BackEnd::Net::Server::handle_get(http_request req)
 
 void BackEnd::Net::Server::handle_post(http_request req)
 {
-	ucout << req.to_string() << endl;
+	//ucout << req.to_string() << endl;
 
 	if (contains_id(req))
 		req.reply(status_codes::MethodNotAllowed);
@@ -88,7 +88,7 @@ void BackEnd::Net::Server::handle_post(http_request req)
 
 void BackEnd::Net::Server::handle_put(http_request req)
 {
-	ucout << req.to_string() << endl;
+	//ucout << req.to_string() << endl;
 
 	try
 	{
@@ -118,7 +118,7 @@ void BackEnd::Net::Server::handle_put(http_request req)
 
 void BackEnd::Net::Server::handle_patch(http_request req)
 {
-	ucout << req.to_string() << endl;
+	//ucout << req.to_string() << endl;
 
 	std::wstring req_body = L"";
 	auto body = req.extract_string().then([&req_body](std::wstring ret_body) {
@@ -132,7 +132,7 @@ void BackEnd::Net::Server::handle_patch(http_request req)
 
 void BackEnd::Net::Server::handle_delete(http_request req)
 {
-	ucout << req.to_string() << endl;
+	//ucout << req.to_string() << endl;
 
 	std::string chk_exist = sql_builder().to_select_query(req);
 	if (data_cntx.verify_query_and_data(chk_exist)) {
@@ -145,7 +145,7 @@ void BackEnd::Net::Server::handle_delete(http_request req)
 
 void BackEnd::Net::Server::handle_options(http_request req)
 {
-	ucout << req.to_string() << endl;
+	//ucout << req.to_string() << endl;
 
 	std::wstring verbs = sql_builder().to_allowed_verbs(req);
 	answer_request(SQLITE_OK, req, web::json::value::parse(verbs));
@@ -153,7 +153,7 @@ void BackEnd::Net::Server::handle_options(http_request req)
 
 void BackEnd::Net::Server::handle_head(http_request req)
 {
-	ucout << req.to_string() << endl;
+	//ucout << req.to_string() << endl;
 
 	std::string select = sql_builder().to_select_query(req);
 

@@ -20,6 +20,7 @@ int wmain(int argc, wchar_t *argv[]) {
 
 	ucout << utility::string_t(U("Listening for request at: ")) << addr << std::endl;
 	std::cout << "Press ENTER to exit." << std::endl;
+	ucout << "------------------------------------------------------------------" << endl;
 
 	std::string line;
 	std::getline(std::cin, line);
