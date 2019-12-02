@@ -50,6 +50,7 @@ BackEnd::Net::Server::~Server()
 void BackEnd::Net::Server::handle_get(http_request req)
 {
 	print_current_date_time();
+	print_requst_date(req);
 
 	std::string get = sql_builder().to_select_query(req);
 	try
@@ -73,6 +74,7 @@ void BackEnd::Net::Server::handle_get(http_request req)
 void BackEnd::Net::Server::handle_post(http_request req)
 {
 	print_current_date_time();
+	print_requst_date(req);
 
 	if (contains_id(req))
 		req.reply(status_codes::MethodNotAllowed);
@@ -89,6 +91,7 @@ void BackEnd::Net::Server::handle_post(http_request req)
 void BackEnd::Net::Server::handle_put(http_request req)
 {
 	print_current_date_time();
+	print_requst_date(req);
 
 	try
 	{
@@ -119,6 +122,7 @@ void BackEnd::Net::Server::handle_put(http_request req)
 void BackEnd::Net::Server::handle_patch(http_request req)
 {
 	print_current_date_time();
+	print_requst_date(req);
 	
 	std::wstring req_body = L"";
 	auto body = req.extract_string().then([&req_body](std::wstring ret_body) {
@@ -133,6 +137,7 @@ void BackEnd::Net::Server::handle_patch(http_request req)
 void BackEnd::Net::Server::handle_delete(http_request req)
 {
 	print_current_date_time();
+	print_requst_date(req);
 
 	std::string chk_exist = sql_builder().to_select_query(req);
 	if (data_cntx.verify_query_and_data(chk_exist)) {
@@ -146,6 +151,7 @@ void BackEnd::Net::Server::handle_delete(http_request req)
 void BackEnd::Net::Server::handle_options(http_request req)
 {
 	print_current_date_time();
+	print_requst_date(req);
 
 	std::wstring verbs = sql_builder().to_allowed_verbs(req);
 	answer_request(SQLITE_OK, req, web::json::value::parse(verbs));
@@ -154,6 +160,7 @@ void BackEnd::Net::Server::handle_options(http_request req)
 void BackEnd::Net::Server::handle_head(http_request req)
 {
 	print_current_date_time();
+	print_requst_date(req);
 
 	std::string select = sql_builder().to_select_query(req);
 
@@ -209,4 +216,23 @@ bool BackEnd::Net::Server::contains_id(const web::http::http_request& req) {
 void BackEnd::Net::Server::print_current_date_time() {
 	auto local = boost::posix_time::second_clock::local_time();
 	ucout << local.date() << " : " << local.time_of_day() << endl;
+}
+
+void BackEnd::Net::Server::print_requst_date(const web::http::http_request& req) {
+	const::web::http::method method = req.method();
+	if (method == methods::GET ||
+		method == methods::HEAD ||
+		method == methods::OPTIONS ||
+		method == methods::DEL) {
+		ucout << req.method().c_str() << ": " << req.relative_uri().to_string() << endl;
+	}
+	else if (method == methods::POST ||
+		method == methods::PUT ||
+		method == methods::PATCH) {
+		ucout << req.method().c_str() << ": " << req.relative_uri().to_string() << endl;
+		ucout << "request body: " << req.body() << endl;
+	}
+	else {
+		ucout << "request method detected:" << method.c_str() << endl;
+	}
 }
