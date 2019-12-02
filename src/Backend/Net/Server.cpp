@@ -163,7 +163,6 @@ void BackEnd::Net::Server::handle_head(http_request req)
 
 void BackEnd::Net::Server::answer_request(const int query_status, const web::http::http_request & req, const web::json::value & resp)
 {
-	// TODO: ucout result of answer
 	switch (query_status) {
 	case (SQLITE_OK): {
 		if (req.method() == methods::GET)
@@ -180,17 +179,25 @@ void BackEnd::Net::Server::answer_request(const int query_status, const web::htt
 			req.reply(status_codes::OK);
 		else if (req.method() == methods::OPTIONS)
 			req.reply(status_codes::OK, resp);
+	
+		ucout << "result: " << (req.method() == methods::POST ? "Created" : "OK") << ";\n" 
+			<< "response: " << resp.serialize().c_str() << "." << endl;
 	}
-					  break;
+		break;
 	case (SQLITE_MISUSE || SQLITE_ERROR):
 		req.reply(status_codes::BadRequest);
+		ucout << "result: BadRequest" << endl;
 		break;
 	case (SQLITE_INTERNAL):
 		req.reply(status_codes::InternalError);
+		ucout << "result: InternalError" << endl;
 		break;
 	default:
+		ucout << "result: NoResultDefined!" << endl;
 		break;
 	}
+
+	ucout << "------------------------------------------------------------------" << endl;
 }
 
 bool BackEnd::Net::Server::contains_id(const web::http::http_request& req) {
