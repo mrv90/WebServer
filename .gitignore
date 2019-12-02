@@ -8,3 +8,4 @@
 /intermediates
 /TestResults
 /bin/x64/Debug
+/src/Frontend/WebServer.db
