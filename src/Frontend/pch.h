@@ -17,10 +17,3 @@ using namespace http::experimental::listener;
 #include "sqlite3.h"
 
 #include <utility>
-
-#include <uriparser\Uri.h>
-#include <uriparser\UriBase.h>
-#include <uriparser\UriDefsAnsi.h>
-#include <uriparser\UriDefsConfig.h>
-#include <uriparser\UriDefsUnicode.h>
-#include <uriparser\UriIp4.h>
