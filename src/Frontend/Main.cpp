@@ -18,9 +18,9 @@ int wmain(int argc, wchar_t *argv[]) {
 	BackEnd::Net::Server g_http(addr, false);
 	g_http.open().wait();
 
-	ucout << utility::string_t(U("Listening for request at: ")) << addr << std::endl;
-	std::cout << "Press ENTER to exit." << std::endl;
-	ucout << "------------------------------------------------------------------" << endl;
+	std::wcout << utility::string_t(U("Listening for request at: ")) << addr << std::endl;
+	std::wcout << "Press ENTER to exit." << std::endl;
+	std::wcout << "------------------------------------------------------------------" << endl;
 
 	std::string line;
 	std::getline(std::cin, line);

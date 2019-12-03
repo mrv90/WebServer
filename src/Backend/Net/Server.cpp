@@ -187,24 +187,24 @@ void BackEnd::Net::Server::answer_request(const int query_status, const web::htt
 		else if (req.method() == methods::OPTIONS)
 			req.reply(status_codes::OK, resp);
 	
-		ucout << "result: " << (req.method() == methods::POST ? "Created" : "OK") << ";\n" 
+		std::wcout << "result: " << (req.method() == methods::POST ? "Created" : "OK") << ";\n" 
 			<< "response: " << resp.serialize().c_str() << "." << endl;
 	}
 		break;
 	case (SQLITE_MISUSE || SQLITE_ERROR):
 		req.reply(status_codes::BadRequest);
-		ucout << "result: BadRequest" << endl;
+		std::wcout << "result: BadRequest" << endl;
 		break;
 	case (SQLITE_INTERNAL):
 		req.reply(status_codes::InternalError);
-		ucout << "result: InternalError" << endl;
+		std::wcout << "result: InternalError" << endl;
 		break;
 	default:
-		ucout << "result: NoResultDefined!" << endl;
+		std::wcout << "result: NoResultDefined!" << endl;
 		break;
 	}
 
-	ucout << "------------------------------------------------------------------" << endl;
+	std::wcout << "------------------------------------------------------------------" << endl;
 }
 
 bool BackEnd::Net::Server::contains_id(const web::http::http_request& req) {
@@ -215,7 +215,7 @@ bool BackEnd::Net::Server::contains_id(const web::http::http_request& req) {
 
 void BackEnd::Net::Server::print_current_date_time() {
 	auto local = boost::posix_time::second_clock::local_time();
-	ucout << local.date() << " : " << local.time_of_day() << endl;
+	std::wcout << local.date() << " : " << local.time_of_day() << endl;
 }
 
 void BackEnd::Net::Server::print_requst_date(const web::http::http_request& req) {
@@ -224,15 +224,15 @@ void BackEnd::Net::Server::print_requst_date(const web::http::http_request& req)
 		method == methods::HEAD ||
 		method == methods::OPTIONS ||
 		method == methods::DEL) {
-		ucout << req.method().c_str() << ": " << req.relative_uri().to_string() << endl;
+		std::wcout << req.method().c_str() << ": " << req.relative_uri().to_string() << endl;
 	}
 	else if (method == methods::POST ||
 		method == methods::PUT ||
 		method == methods::PATCH) {
-		ucout << req.method().c_str() << ": " << req.relative_uri().to_string() << endl;
-		ucout << "request body: " << req.body() << endl;
+		std::wcout << req.method().c_str() << ": " << req.relative_uri().to_string() << endl;
+		std::wcout << "request body: " << req.body() << endl;
 	}
 	else {
-		ucout << "request method detected:" << method.c_str() << endl;
+		std::wcout << "request method detected:" << method.c_str() << endl;
 	}
 }
