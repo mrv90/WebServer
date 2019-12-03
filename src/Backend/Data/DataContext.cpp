@@ -5,7 +5,7 @@
 BackEnd::Data::DataContext::DataContext()
 {
 	if (SQLITE_OK != sqlite3_open("", &con)) // temporary database
-		auto err = sqlite3_errmsg(con);
+		std::wcout << sqlite3_errmsg(con) << std::endl;
 
 	ApplyDbStructure();
 }
@@ -14,11 +14,11 @@ BackEnd::Data::DataContext::DataContext(bool in_memory)
 {
 	if (in_memory) {
 		if (SQLITE_OK != sqlite3_open("", &con)) // temporary database
-			auto err = sqlite3_errmsg(con);
+			std::wcout << sqlite3_errmsg(con) << std::endl;
 	}
 	else {
 		if (SQLITE_OK != sqlite3_open_v2("WebServer.db", &con, SQLITE_OPEN_CREATE | SQLITE_OPEN_READWRITE, NULL))
-			auto err = sqlite3_errmsg(con);
+			std::wcout << sqlite3_errmsg(con) << std::endl;
 	}
 
 	ApplyDbStructure();
@@ -54,7 +54,7 @@ BackEnd::Data::DataContext & BackEnd::Data::DataContext::operator=(DataContext &
 BackEnd::Data::DataContext::~DataContext()
 {
 	if ((nullptr != con) && (SQLITE_OK != sqlite3_close(con)))
-		auto err = sqlite3_errmsg(con);
+		std::wcout << sqlite3_errmsg(con) << std::endl;
 }
 
 int BackEnd::Data::DataContext::exe_cmd(const std::string& cmd)
@@ -62,12 +62,10 @@ int BackEnd::Data::DataContext::exe_cmd(const std::string& cmd)
 	int ret = -1;
 	char** errmsg = nullptr;
 
-	// TODO: remove id and enable from all responses
-	// TODO: add exception 
-	// TODO: ucout result of execmd
 	sqlite3_exec(con, "BEGIN TRANSACTION;", NULL, NULL, NULL);
 	if (SQLITE_OK != (ret = sqlite3_exec(con, cmd.c_str(), NULL, NULL, errmsg))) {
-		auto err = (const char*)&errmsg;
+		
+		std::wcout << "sqlite ret-code: " << ret << ", " << (const char*)&errmsg << std::endl;
 		return ret;
 	}
 	sqlite3_exec(con, "END TRANSACTION;", NULL, NULL, NULL);
@@ -80,8 +78,6 @@ int BackEnd::Data::DataContext::exe_query(const std::string& query, web::json::v
 	int ret = -1;
 	sqlite3_stmt* stmt = NULL;
 	
-	// TODO: add exception 
-	// TODO: ucout result of exequery
 	if (SQLITE_OK != (ret = sqlite3_prepare_v2(con, query.c_str(), -1, &stmt, NULL))) {
 		auto err = sqlite3_errmsg(con);
 		return ret;
@@ -91,7 +87,7 @@ int BackEnd::Data::DataContext::exe_query(const std::string& query, web::json::v
 		utility::stringstream_t istrm;
 		istrm << L"{";
 		for (unsigned int i = 0; i <= sqlite3_data_count(stmt); i++) {
-			
+
 			switch (sqlite3_column_type(stmt, i)) 
 			{
 			case (SQLITE_INTEGER):
@@ -128,7 +124,7 @@ int BackEnd::Data::DataContext::exe_query(const std::string& query, web::json::v
 		resp = web::json::value::parse(istrm);
 	}
 	else {
-		auto err = sqlite3_errmsg(con);
+		std::wcout << "sqlite ret-code: " << ret << ", " << sqlite3_errmsg(con) << std::endl;
 		return ret;
 	}
 
@@ -142,27 +138,23 @@ bool BackEnd::Data::DataContext::verify_query_and_data(const std::string& query)
 	int ret = -1;
 	sqlite3_stmt* stmt = NULL;
 
-	// TODO: ucout result of exequery
-	if (SQLITE_OK != (ret = sqlite3_prepare_v2(con, query.c_str(), -1, &stmt, NULL))) {
-		auto err = sqlite3_errmsg(con);
-		throw BackEnd::Data::exception(err, ret);
-	}
+	if (SQLITE_OK != (ret = sqlite3_prepare_v2(con, query.c_str(), -1, &stmt, NULL)))
+		std::wcout << "sqlite ret-code: " << ret << ", " << sqlite3_errmsg(con) << std::endl;
 
 	if (SQLITE_ROW == (ret = sqlite3_step(stmt)))
 		return true;
-	
-	else {
-		auto err = sqlite3_errmsg(con);
-		throw BackEnd::Data::exception(err, ret);
-	}
+	else
+		std::wcout << "sqlite ret-code: " << ret << ", " << sqlite3_errmsg(con) << std::endl;
+
+	return false;
 }
 
 bool BackEnd::Data::DataContext::verify_data(const std::string& query) {
 	int ret = -1;
 	sqlite3_stmt* stmt = NULL;
 
-	// TODO: ucout result of exequery
 	if (SQLITE_OK != (ret = sqlite3_prepare_v2(con, query.c_str(), -1, &stmt, NULL))) {
+		std::wcout << "sqlite ret-code: " << ret << ", " << sqlite3_errmsg(con) << std::endl;
 		return false;
 	}
 
@@ -171,13 +163,11 @@ bool BackEnd::Data::DataContext::verify_data(const std::string& query) {
 	else if (SQLITE_DONE == (ret = sqlite3_step(stmt)))
 		return false;
 	else
-		throw std::exception("unhandeled sqlite error code");
+		std::wcout << "unhandeled sqlite error code" << std::endl;
 }
 
 int BackEnd::Data::DataContext::ApplyDbStructure()
 {
-	// TODO: add exception 
-	// TODO: ucout result of execmd
 	const char* alter_db_structure = 
 		"CREATE TABLE IF NOT EXISTS course (course_id INTEGER PRIMARY KEY, name TEXT);\
 		\
@@ -211,7 +201,7 @@ int BackEnd::Data::DataContext::ApplyDbStructure()
 
 	int ret = -1;
 	if (SQLITE_OK != (ret = exe_cmd(alter_db_structure))) {
-		auto err = sqlite3_errmsg(con);
+		std::wcout << "sqlite ret-code: " << ret << ", " << sqlite3_errmsg(con) << std::endl;
 		return ret;
 	}
 
