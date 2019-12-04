@@ -111,7 +111,7 @@ namespace Test {
 	// working with QUIZ entity 
 	TEST_F(Crud, Quiz_OnCreating_Success) {
 		auto req = uri_builder(local).append_path(U("quiz")).append_query(U("class_ref=2"))
-			.append_query(U("student_ref=2")).append_query(U("score:18"));
+			.append_query(U("student_ref=2")).append_query(U("grade:18"));
 		cli.make_request(methods::POST, req.to_string(), 0).then([](http_response response) {
 			EXPECT_EQ(response.status_code(), status_codes::Created);
 		}).wait();
@@ -120,14 +120,14 @@ namespace Test {
 		auto req = uri_builder(local).append_path(U("quiz")).append_query(U("class_ref=1"));
 		cli.make_request(methods::GET, req.to_string(), 0).then([](http_response response) {
 			response.extract_json().then([](web::json::value result) {
-				web::json::value expected = web::json::value::parse(L"{\"class_ref\":1,\"quiz_id\":1,\"score\":17.5,\"student_ref\":1}");
+				web::json::value expected = web::json::value::parse(L"{\"class_ref\":1,\"quiz_id\":1,\"grade\":17.5,\"student_ref\":1}");
 				EXPECT_EQ(result.serialize(), expected.serialize());
 			});
 		}).wait();
 	}
 	TEST_F(Crud, Quiz_OnUpdating_Success) {
 		auto req = uri_builder(local).append_path(U("quiz")).append_query(U("quiz_id=2"));
-		auto body = web::json::value(U("score=20"));
+		auto body = web::json::value(U("grade=20"));
 		cli.make_request(methods::PUT, req.to_string(), body).then([](http_response response) {
 			EXPECT_EQ(response.status_code(), status_codes::OK);
 		}).wait();

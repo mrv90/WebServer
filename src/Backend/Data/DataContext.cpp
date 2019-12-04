@@ -196,7 +196,7 @@ int BackEnd::Data::DataContext::ApplyDbStructure()
 			quiz_id INTEGER PRIMARY KEY,\
 			class_ref INTEGER REFERENCES class(class_id) ON UPDATE CASCADE,\
 			student_ref INTEGER REFERENCES student(student_id) ON UPDATE CASCADE,\
-			score INTEGER\
+			grade INTEGER\
 		);";
 
 	int ret = -1;
