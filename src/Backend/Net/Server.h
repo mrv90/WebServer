@@ -42,6 +42,7 @@ namespace BackEnd {
 			bool contains_id(const web::http::http_request& req);
 			void print_current_date_time();
 			void print_requst_date(const web::http::http_request& req);
+			bool is_a_valid_request(const web::http::http_request& req);
 
 			http_listener http_listener;
 		};
