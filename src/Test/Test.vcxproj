@@ -57,7 +57,6 @@
     <ClInclude Include="TestServer.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="CodeOnDemand.cpp" />
     <ClCompile Include="Crud.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
