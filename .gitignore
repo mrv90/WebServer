@@ -9,3 +9,4 @@
 /TestResults
 /bin/x64/Debug
 /src/Frontend/WebServer.db
+/src/Test/Test.vcxproj.filters
