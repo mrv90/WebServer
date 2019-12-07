@@ -64,13 +64,15 @@ void BackEnd::Net::Server::handle_get(http_request req)
 		catch (const BackEnd::Data::exception& e)
 		{
 			if (e.error_type() == SQLITE_ERROR)
-				req.reply(status_codes::BadRequest);
+				answer_request(req, status_codes::BadRequest);
 			else if (e.error_type() == SQLITE_DONE)
-				req.reply(status_codes::NotFound);
+				answer_request(req, status_codes::NotFound);
 			else
-				req.reply(status_codes::InternalError);
+				answer_request(req, status_codes::InternalError);
 		}
 	}
+	else
+		answer_request(req, status_codes::BadRequest);
 }
 
 void BackEnd::Net::Server::handle_post(http_request req)
@@ -80,7 +82,7 @@ void BackEnd::Net::Server::handle_post(http_request req)
 
 	if (is_a_valid_request(req)) {
 		if (contains_id(req))
-			req.reply(status_codes::MethodNotAllowed);
+			answer_request(req, status_codes::MethodNotAllowed);
 
 		std::string chk_exist = sql_builder().to_select_query(req);
 		if (data_cntx.verify_data(chk_exist) == false) {
@@ -88,8 +90,10 @@ void BackEnd::Net::Server::handle_post(http_request req)
 			answer_request(data_cntx.exe_cmd(create), req);
 		}
 		else
-			req.reply(status_codes::Conflict); // duplicated data
+			answer_request(req, status_codes::Conflict); // duplicated data
 	}
+	else
+		answer_request(req, status_codes::BadRequest);
 }
 
 void BackEnd::Net::Server::handle_put(http_request req)
@@ -102,7 +106,7 @@ void BackEnd::Net::Server::handle_put(http_request req)
 		{
 			std::string chk_exist = sql_builder().to_select_query(req);
 			if (data_cntx.verify_query_and_data(chk_exist) == false)
-				req.reply(status_codes::NotFound);
+				answer_request(req, status_codes::NotFound);
 
 			std::wstring req_body = L"";
 			auto body = req.extract_string().then([&req_body](std::wstring ret_body) {
@@ -116,13 +120,15 @@ void BackEnd::Net::Server::handle_put(http_request req)
 		catch (const BackEnd::Data::exception& e)
 		{
 			if (e.error_type() == SQLITE_ERROR)
-				req.reply(status_codes::BadRequest);
+				answer_request(req, status_codes::BadRequest);
 			else if (e.error_type() == SQLITE_DONE)
-				req.reply(status_codes::NotFound);
+				answer_request(req, status_codes::NotFound);
 			else
-				req.reply(status_codes::InternalError);
+				answer_request(req, status_codes::InternalError);
 		}
 	}
+	else
+		answer_request(req, status_codes::BadRequest);
 }
 
 void BackEnd::Net::Server::handle_patch(http_request req)
@@ -140,6 +146,8 @@ void BackEnd::Net::Server::handle_patch(http_request req)
 
 		answer_request(data_cntx.exe_cmd(update.c_str()), req);
 	}
+	else
+		answer_request(req, status_codes::BadRequest);
 }
 
 void BackEnd::Net::Server::handle_delete(http_request req)
@@ -154,8 +162,10 @@ void BackEnd::Net::Server::handle_delete(http_request req)
 			answer_request(data_cntx.exe_cmd(del), req);
 		}
 		else
-			req.reply(status_codes::NotFound);
+			answer_request(req, status_codes::NotFound);
 	}
+	else
+		answer_request(req, status_codes::BadRequest);
 }
 
 void BackEnd::Net::Server::handle_options(http_request req)
@@ -167,6 +177,8 @@ void BackEnd::Net::Server::handle_options(http_request req)
 		std::wstring verbs = sql_builder().to_allowed_verbs(req);
 		answer_request(SQLITE_OK, req, web::json::value::parse(verbs));
 	}
+	else
+		answer_request(req, status_codes::BadRequest);
 }
 
 void BackEnd::Net::Server::handle_head(http_request req)
@@ -180,6 +192,8 @@ void BackEnd::Net::Server::handle_head(http_request req)
 		web::json::value resp{};
 		answer_request(data_cntx.exe_query(select, resp), req);
 	}
+	else
+		answer_request(req, status_codes::BadRequest);
 }
 
 void BackEnd::Net::Server::answer_request(const int query_status, const web::http::http_request & req, const web::json::value & resp)
@@ -217,6 +231,13 @@ void BackEnd::Net::Server::answer_request(const int query_status, const web::htt
 		std::wcout << "result: NoResultDefined!" << endl;
 		break;
 	}
+
+	std::wcout << "------------------------------------------------------------------" << endl;
+}
+
+void BackEnd::Net::Server::answer_request(const web::http::http_request & req, const int http_code) {
+	std::wcout << "result: " << http_code << endl;
+	req.reply(http_code);
 
 	std::wcout << "------------------------------------------------------------------" << endl;
 }
