@@ -171,7 +171,7 @@ int BackEnd::Data::DataContext::ApplyDbStructure()
 	const char* alter_db_structure = 
 		"CREATE TABLE IF NOT EXISTS course (course_id INTEGER PRIMARY KEY, name TEXT);\
 		\
-		CREATE TABLE IF NOT EXISTS student(student_id INTEGER PRIMARY KEY, name TEXT, family_name TEXT, birth_date TEXT);\
+		CREATE TABLE IF NOT EXISTS student (student_id INTEGER PRIMARY KEY, name TEXT, family_name TEXT, birth_date TEXT);\
 		\
 		CREATE TABLE IF NOT EXISTS score\
 		(\
@@ -206,4 +206,10 @@ int BackEnd::Data::DataContext::ApplyDbStructure()
 	}
 
 	return SQLITE_OK;
+}
+
+std::vector<std::string> BackEnd::Data::DataContext::get_data_entities() {
+	return std::vector<std::string> {
+		"course", "student", "score", "class", "quiz"
+	};
 }
