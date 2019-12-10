@@ -15,10 +15,11 @@ namespace BackEnd {
 
 			int exe_cmd(const std::string& cmd);
 			int exe_query(const std::string& query, web::json::value &resp);
+			int exe_query(const std::string& query, std::vector<std::wstring> &resp);
 			bool verify_query_and_data(const std::string& query);
 			bool verify_data(const std::string& query);
-			std::vector<std::string> get_data_entities();
-			
+			std::vector<std::wstring> get_data_entities();
+			std::vector<std::wstring> get_data_fields(const std::string& entity);
 		
 		protected:
 			DataContext();
