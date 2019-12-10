@@ -273,6 +273,9 @@ void BackEnd::Net::Server::print_requst_date(const web::http::http_request& req)
 }
 
 bool BackEnd::Net::Server::is_a_valid_request(const web::http::http_request& req) {
+	//TODO check url structure using regex with atleast one fragment and optional queries
+	// replace it with check empty uri
+
 	if (req.request_uri().is_empty()) {
 		std::wcout << "Error: " << "unable to process empty request!" << endl;
 		return false;
