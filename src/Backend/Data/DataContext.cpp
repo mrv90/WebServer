@@ -272,7 +272,7 @@ std::vector<std::wstring> BackEnd::Data::DataContext::get_data_entities() {
 	};
 }
 
-std::vector<std::wstring> BackEnd::Data::DataContext::get_data_fields(const std::string& entity) {
+std::vector<std::wstring> BackEnd::Data::DataContext::get_data_fields(const std::wstring& entity) {
 	const std::string get_all_fields = "SELECT name FROM PRAGMA_TABLE_INFO('" + entity + "')";
 	std::vector<std::wstring> fields;
 
