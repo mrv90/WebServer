@@ -222,6 +222,8 @@ bool BackEnd::Data::DataContext::verify_data(const std::string& query) {
 		return false;
 	else
 		std::wcout << "unhandeled sqlite error code" << std::endl;
+
+	return false;
 }
 
 int BackEnd::Data::DataContext::ApplyDbStructure()
