@@ -53,6 +53,9 @@ namespace Test {
 				EXPECT_EQ(response.status_code(), status_codes::OK);
 			}).wait();
 		}
+		TEST_F(Crud, Student_OnIsolatedDeleting_Success) {
+			EXPECT_EQ(true, false);
+		}
 
 
 		// working with COURSE entity
@@ -78,6 +81,9 @@ namespace Test {
 			cli.make_request(methods::PUT, req.to_string(), body).then([](http_response response) {
 				EXPECT_EQ(response.status_code(), status_codes::OK);
 			}).wait();
+		}
+		TEST_F(Crud, Course_OnIsolatedDeleting_Success) {
+			EXPECT_EQ(true, false);
 		}
 
 
@@ -106,6 +112,9 @@ namespace Test {
 			cli.make_request(methods::PUT, req.to_string(), body).then([](http_response response) {
 				EXPECT_EQ(response.status_code(), status_codes::OK);
 			}).wait();
+		}
+		TEST_F(Crud, Class_OnIsolatedDeleting_Success) {
+			EXPECT_EQ(true, false);
 		}
 
 
@@ -166,6 +175,9 @@ namespace Test {
 			cli.make_request(methods::PUT, req.to_string(), body).then([](http_response response) {
 				EXPECT_EQ(response.status_code(), status_codes::OK);
 			}).wait();
+		}
+		TEST_F(Crud, Score_OnIsolatedDeleting_Success) {
+			EXPECT_EQ(true, false);
 		}
 	}
 }
