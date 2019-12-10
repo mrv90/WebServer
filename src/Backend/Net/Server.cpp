@@ -301,7 +301,7 @@ bool BackEnd::Net::Server::has_valid_fragments(const web::http::http_request& re
 		auto pathes = req.request_uri().split_path(req.request_uri().path());
 		auto entities = data_cntx.get_data_entities();
 
-		if (pathes.size() > 1) {
+		if (!pathes.empty()) {
 			for (auto p : pathes) {
 				if (std::find(pathes.begin(), pathes.end(), p.c_str()) != pathes.end())
 					break;
@@ -318,7 +318,7 @@ bool BackEnd::Net::Server::has_valid_queries(const web::http::http_request& req)
 	if (req.request_uri().query().size() > 1) {
 		auto queries = req.request_uri().split_query(req.request_uri().query());
 
-		if (queries.size() > 1) {
+		if (!queries.empty()) {
 			for (auto q : queries) {
 				auto fields = data_cntx.get_data_fields(q.first);
 				if (std::find(fields.begin(), fields.end(), q.first.c_str()) != fields.end())
