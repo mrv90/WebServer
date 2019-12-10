@@ -294,7 +294,7 @@ bool BackEnd::Net::Server::has_valid_fragments(const web::http::http_request& re
 
 		if (pathes.size() > 1) {
 			for (auto p : pathes) {
-				if (std::find(pathes.begin(), pathes.end(), p) != pathes.end())
+				if (std::find(pathes.begin(), pathes.end(), p.c_str()) != pathes.end())
 					break;
 				else
 					return false;
@@ -312,7 +312,7 @@ bool BackEnd::Net::Server::has_valid_queries(const web::http::http_request& req)
 		if (queries.size() > 1) {
 			for (auto q : queries) {
 				auto fields = data_cntx.get_data_fields(q.first);
-				if (std::find(fields.begin(), fields.end(), q) != fields.end())
+				if (std::find(fields.begin(), fields.end(), q.first.c_str()) != fields.end())
 					break;
 				else
 					return false;
