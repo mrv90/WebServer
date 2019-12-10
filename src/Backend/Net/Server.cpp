@@ -215,20 +215,20 @@ void BackEnd::Net::Server::answer_request(const int query_status, const web::htt
 		else if (req.method() == methods::OPTIONS)
 			req.reply(status_codes::OK, resp);
 	
-		std::wcout << "result: " << (req.method() == methods::POST ? "Created" : "OK") << ";\n" 
+		std::wcout << "Result: " << (req.method() == methods::POST ? "Created" : "OK") << ";\n" 
 			<< "response: " << resp.serialize().c_str() << "." << endl;
 	}
 		break;
 	case (SQLITE_MISUSE || SQLITE_ERROR):
 		req.reply(status_codes::BadRequest);
-		std::wcout << "result: BadRequest" << endl;
+		std::wcout << "Result: BadRequest" << endl;
 		break;
 	case (SQLITE_INTERNAL):
 		req.reply(status_codes::InternalError);
-		std::wcout << "result: InternalError" << endl;
+		std::wcout << "Result: InternalError" << endl;
 		break;
 	default:
-		std::wcout << "result: NoResultDefined!" << endl;
+		std::wcout << "Result: no result defined!" << endl;
 		break;
 	}
 
@@ -236,7 +236,7 @@ void BackEnd::Net::Server::answer_request(const int query_status, const web::htt
 }
 
 void BackEnd::Net::Server::answer_request(const web::http::http_request & req, const int http_code) {
-	std::wcout << "result: " << http_code << endl;
+	std::wcout << "Result: " << http_code << endl;
 	req.reply(http_code);
 
 	std::wcout << "------------------------------------------------------------------" << endl;
@@ -265,22 +265,28 @@ void BackEnd::Net::Server::print_requst_date(const web::http::http_request& req)
 		method == methods::PUT ||
 		method == methods::PATCH) {
 		std::wcout << req.method().c_str() << ": " << req.relative_uri().to_string() << endl;
-		std::wcout << "request body: " << req.body() << endl;
+		std::wcout << "Request body: " << req.body() << endl;
 	}
 	else {
-		std::wcout << "request method detected:" << method.c_str() << endl;
+		std::wcout << "Request method detected:" << method.c_str() << endl;
 	}
 }
 
 bool BackEnd::Net::Server::is_a_valid_request(const web::http::http_request& req) {
-	if (req.request_uri().is_empty())
+	if (req.request_uri().is_empty()) {
+		std::wcout << "Error: " << "unable to process empty request!" << endl;
 		return false;
+	}
 	
-	else if (!has_valid_fragments(req))
+	else if (!has_valid_fragments(req)) {
+		std::wcout << "Error: " << "invalid fragments detected!" << endl;
 		return false;
+	}
 
-	else if (!has_valid_queries(req))
+	else if (!has_valid_queries(req)) {
+		std::wcout << "Error: " << "invalid queries detected inside request!" << endl;
 		return false;
+	}
 
 	// check http_verb for suffient fragment | query
 
