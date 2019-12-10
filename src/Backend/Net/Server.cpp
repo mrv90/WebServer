@@ -275,6 +275,38 @@ void BackEnd::Net::Server::print_requst_date(const web::http::http_request& req)
 bool BackEnd::Net::Server::is_a_valid_request(const web::http::http_request& req) {
 	if (req.request_uri().is_empty())
 		return false;
+	
+	else if (!has_valid_fragments(req))
+		return false;
+
+	else if (!has_valid_queries(req))
+		return false;
+
+	// check http_verb for suffient fragment | query
 
 	return true;
+}
+
+bool BackEnd::Net::Server::has_valid_fragments(const web::http::http_request& req) {
+	if (req.request_uri().path().size() > 1) {
+		auto pathes = req.request_uri().split_path(req.request_uri().path());
+		auto entities = data_cntx.get_data_entities();
+
+		if (pathes.size() > 1) {
+			for (auto p : pathes) {
+				if (std::find(pathes.begin(), pathes.end(), p) != pathes.end())
+					break;
+				else
+					return false;
+			}
+		}
+	}
+	else
+		return false;
+
+	return true;
+}
+
+bool BackEnd::Net::Server::has_valid_queries(const web::http::http_request& req) {
+
 }
