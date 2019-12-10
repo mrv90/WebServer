@@ -301,12 +301,10 @@ bool BackEnd::Net::Server::has_valid_fragments(const web::http::http_request& re
 			}
 		}
 	}
-	else
-		return false;
 
 	return true;
 }
 
 bool BackEnd::Net::Server::has_valid_queries(const web::http::http_request& req) {
-
+	
 }
