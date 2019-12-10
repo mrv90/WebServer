@@ -94,7 +94,6 @@ std::wstring sql_builder::to_allowed_verbs(const web::http::http_request& req)
 
 void sql_builder::add_pathes(const web::http::http_request& req, std::wstring& sql)
 {
-	// TODO: remove primary keys of all entities
 	auto pathes = req.request_uri().split_path(req.request_uri().path());
 	if (req.request_uri().path().size() > 1) {
 		if (pathes.size() > 1) {
