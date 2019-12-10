@@ -88,6 +88,13 @@ namespace Test {
 			}).wait();
 		}
 
+		TEST_F(Smoke, None_OnIllegalRequest_BadRequest) {
+			auto req = uri_builder(local).append_path(U("favicon.ico"));
+			cli.make_request(methods::GET, req.to_string(), 0).then([](http_response response) {
+				EXPECT_EQ(response.status_code(), status_codes::BadRequest);
+			}).wait();
+		}
+
 		// TODO: OK for TRACE: create a loopback for the request message
 
 		// TODO: stress_test to produce service_not_available
