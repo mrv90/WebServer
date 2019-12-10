@@ -306,5 +306,19 @@ bool BackEnd::Net::Server::has_valid_fragments(const web::http::http_request& re
 }
 
 bool BackEnd::Net::Server::has_valid_queries(const web::http::http_request& req) {
-	
+	if (req.request_uri().query().size() > 1) {
+		auto queries = req.request_uri().split_query(req.request_uri().query());
+
+		if (queries.size() > 1) {
+			for (auto q : queries) {
+				auto fields = data_cntx.get_data_fields(q.first);
+				if (std::find(fields.begin(), fields.end(), q) != fields.end())
+					break;
+				else
+					return false;
+			}
+		}
+	}
+
+	return true;
 }
