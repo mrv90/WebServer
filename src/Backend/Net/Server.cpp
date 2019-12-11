@@ -274,7 +274,8 @@ void BackEnd::Net::Server::print_requst_date(const web::http::http_request& req)
 
 bool BackEnd::Net::Server::is_a_valid_request(const web::http::http_request& req) {
 	if (req.method() == methods::GET)
-		return must_have_atleast_one_path(req) && contains_valid_pathes(req);
+		return must_have_atleast_one_path(req) && contains_valid_pathes(req)
+			&& contains_valid_queries(req);
 	else if (req.method() == methods::POST)
 		return must_have_atleast_one_path(req) && contains_valid_pathes(req);
 	else if (req.method() == methods::PUT || req.method() == methods::PATCH)
