@@ -40,12 +40,18 @@ namespace BackEnd {
 
 			void answer_request(const int query_status, const web::http::http_request & req, const web::json::value & resp = NULL);
 			void answer_request(const web::http::http_request & req, const int http_code);
+			
 			bool contains_id(const web::http::http_request& req);
 			void print_current_date_time();
 			void print_requst_date(const web::http::http_request& req);
+			
 			bool is_a_valid_request(const web::http::http_request& req);
-			bool has_valid_fragments(const web::http::http_request& req);
-			bool has_valid_queries(const web::http::http_request& req);
+			bool could_have_fragments(const web::http::http_request& req);
+			bool must_have_atleast_one_fragment(const web::http::http_request& req);
+			bool must_have_atleast_one_query(const web::http::http_request& req);
+			bool must_have_valid_body(const web::http::http_request& req);
+			bool contains_valid_fragments(const web::http::http_request& req);
+			bool contains_valid_queries(const web::http::http_request& req);
 
 			http_listener http_listener;
 		};

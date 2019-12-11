@@ -273,40 +273,83 @@ void BackEnd::Net::Server::print_requst_date(const web::http::http_request& req)
 }
 
 bool BackEnd::Net::Server::is_a_valid_request(const web::http::http_request& req) {
-	//TODO check url structure using regex with atleast one fragment and optional queries
-	// replace it with check empty uri
-
-	if (req.request_uri().is_empty()) {
-		std::wcout << "Error: " << "unable to process empty request!" << endl;
-		return false;
-	}
-	
-	else if (!has_valid_fragments(req)) {
-		std::wcout << "Error: " << "invalid fragments detected!" << endl;
-		return false;
-	}
-
-	else if (!has_valid_queries(req)) {
-		std::wcout << "Error: " << "invalid queries detected inside request!" << endl;
-		return false;
+	if (req.method() == methods::GET)
+		return must_have_atleast_one_fragment(req) && contains_valid_fragments(req);
+	else if (req.method() == methods::POST)
+		return must_have_atleast_one_fragment(req) && contains_valid_fragments(req) 
+			&& must_have_valid_body(req);
+	else if (req.method() == methods::PUT || req.method() == methods::PATCH)
+		return must_have_atleast_one_fragment(req) && contains_valid_fragments(req) 
+			&& must_have_atleast_one_query(req) && contains_valid_queries(req) 
+			&& must_have_valid_body(req);
+	else if (req.method() == methods::HEAD || req.method() == methods::OPTIONS)
+		return could_have_fragments(req);
+	else {
+		std::wcout << "Error: " << "undefined validation on :" << req.method() << " requst" << endl;
 	}
 
-	// check http_verb for suffient fragment | query
+	return false;
+}
+
+bool BackEnd::Net::Server::could_have_fragments(const web::http::http_request& req) {
+	const boost::wregex wr(L"\/{1}[a-zA-Z0-9/]*");
+	if (!boost::regex_search(req.relative_uri().to_string(), wr)) {
+		std::wcout << "Error: " << "expecting correct url with optional fragment" << endl;
+		return false;
+	}
 
 	return true;
 }
 
-bool BackEnd::Net::Server::has_valid_fragments(const web::http::http_request& req) {
+bool BackEnd::Net::Server::must_have_atleast_one_fragment(const web::http::http_request& req) {
+	const boost::wregex wr(L"\/{1}[a-zA-Z0-9/]+");
+	if (!boost::regex_search(req.relative_uri().to_string(), wr)) {
+		std::wcout << "Error: " << "expecting atleast one fragment" << endl;
+		return false;
+	}
+
+	return true;
+}
+
+bool BackEnd::Net::Server::must_have_atleast_one_query(const web::http::http_request& req) {
+	const boost::wregex wr(L"\&?[a-zA-Z0-9]+\=[a-zA-Z0-9]+");
+	if (!boost::regex_search(req.relative_uri().to_string(), wr)) {
+		std::wcout << "Error: " << "expecting atleast one fragment & query" << endl;
+		return false;
+	}
+
+	return true;
+}
+
+bool BackEnd::Net::Server::must_have_valid_body(const web::http::http_request& req) {
+	try
+	{
+		req.extract_json().then([](web::json::value result) {
+			if (!result.serialize().empty())
+				return true;
+		}).wait();
+	}
+	catch (const std::exception&)
+	{
+		std::wcout << "Error: " << "expecting body in json format" << endl;
+	}
+	
+	return false;
+}
+
+bool BackEnd::Net::Server::contains_valid_fragments(const web::http::http_request& req) {
 	if (req.request_uri().path().size() > 1) {
 		auto pathes = req.request_uri().split_path(req.request_uri().path());
 		auto entities = data_cntx.get_data_entities();
 
 		if (!pathes.empty()) {
 			for (auto p : pathes) {
-				if (std::find(pathes.begin(), pathes.end(), p.c_str()) != pathes.end())
+				if (std::find(entities.begin(), entities.end(), p.c_str()) != entities.end())
 					break;
-				else
+				else {
+					std::wcout << "Error: " << "invalid fragments detected!" << endl;
 					return false;
+				}
 			}
 		}
 	}
@@ -314,7 +357,7 @@ bool BackEnd::Net::Server::has_valid_fragments(const web::http::http_request& re
 	return true;
 }
 
-bool BackEnd::Net::Server::has_valid_queries(const web::http::http_request& req) {
+bool BackEnd::Net::Server::contains_valid_queries(const web::http::http_request& req) {
 	if (req.request_uri().query().size() > 1) {
 		auto queries = req.request_uri().split_query(req.request_uri().query());
 
@@ -323,8 +366,10 @@ bool BackEnd::Net::Server::has_valid_queries(const web::http::http_request& req)
 				auto fields = data_cntx.get_data_fields(q.first);
 				if (std::find(fields.begin(), fields.end(), q.first.c_str()) != fields.end())
 					break;
-				else
+				else {
+					std::wcout << "Error: " << "invalid queries detected inside request!" << endl;
 					return false;
+				}
 			}
 		}
 	}
