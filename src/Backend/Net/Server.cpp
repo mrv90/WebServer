@@ -294,7 +294,7 @@ bool BackEnd::Net::Server::is_a_valid_request(const web::http::http_request& req
 bool BackEnd::Net::Server::could_have_some_pathes(const web::http::http_request& req) {
 	const boost::wregex wr(L"\/{1}[a-zA-Z0-9/]*");
 	if (!boost::regex_search(req.relative_uri().to_string(), wr)) {
-		std::wcout << "Error: " << "expecting correct url with optional fragment" << endl;
+		std::wcout << "Error: " << "expecting correct url with optional path" << endl;
 		return false;
 	}
 
@@ -304,7 +304,7 @@ bool BackEnd::Net::Server::could_have_some_pathes(const web::http::http_request&
 bool BackEnd::Net::Server::must_have_atleast_one_path(const web::http::http_request& req) {
 	const boost::wregex wr(L"\/{1}[a-zA-Z0-9/]+");
 	if (!boost::regex_search(req.relative_uri().to_string(), wr)) {
-		std::wcout << "Error: " << "expecting atleast one fragment" << endl;
+		std::wcout << "Error: " << "expecting atleast one path" << endl;
 		return false;
 	}
 
@@ -314,7 +314,7 @@ bool BackEnd::Net::Server::must_have_atleast_one_path(const web::http::http_requ
 bool BackEnd::Net::Server::must_have_atleast_one_query(const web::http::http_request& req) {
 	const boost::wregex wr(L"\&?[a-zA-Z0-9]+\=[a-zA-Z0-9]+");
 	if (!boost::regex_search(req.relative_uri().to_string(), wr)) {
-		std::wcout << "Error: " << "expecting atleast one fragment & query" << endl;
+		std::wcout << "Error: " << "expecting atleast one path & query" << endl;
 		return false;
 	}
 
@@ -347,7 +347,7 @@ bool BackEnd::Net::Server::contains_valid_pathes(const web::http::http_request& 
 				if (std::find(entities.begin(), entities.end(), p.c_str()) != entities.end())
 					break;
 				else {
-					std::wcout << "Error: " << "invalid fragments detected!" << endl;
+					std::wcout << "Error: " << "invalid pathes detected!" << endl;
 					return false;
 				}
 			}
