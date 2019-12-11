@@ -276,8 +276,7 @@ bool BackEnd::Net::Server::is_a_valid_request(const web::http::http_request& req
 	if (req.method() == methods::GET)
 		return must_have_atleast_one_fragment(req) && contains_valid_fragments(req);
 	else if (req.method() == methods::POST)
-		return must_have_atleast_one_fragment(req) && contains_valid_fragments(req) 
-			&& must_have_valid_body(req);
+		return must_have_atleast_one_fragment(req) && contains_valid_fragments(req);
 	else if (req.method() == methods::PUT || req.method() == methods::PATCH)
 		return must_have_atleast_one_fragment(req) && contains_valid_fragments(req) 
 			&& must_have_atleast_one_query(req) && contains_valid_queries(req) 
