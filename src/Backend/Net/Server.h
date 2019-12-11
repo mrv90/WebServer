@@ -51,7 +51,7 @@ namespace BackEnd {
 			bool must_have_atleast_one_path(const web::http::http_request& req);
 			bool must_have_atleast_one_query(const web::http::http_request& req);
 			bool must_have_valid_body(const web::http::http_request& req);
-			bool contains_valid_fragments(const web::http::http_request& req);
+			bool contains_valid_pathes(const web::http::http_request& req);
 			bool contains_valid_queries(const web::http::http_request& req);
 
 			http_listener http_listener;
