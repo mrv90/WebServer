@@ -274,15 +274,15 @@ void BackEnd::Net::Server::print_requst_date(const web::http::http_request& req)
 
 bool BackEnd::Net::Server::is_a_valid_request(const web::http::http_request& req) {
 	if (req.method() == methods::GET)
-		return must_have_atleast_one_fragment(req) && contains_valid_fragments(req);
+		return must_have_atleast_one_path(req) && contains_valid_fragments(req);
 	else if (req.method() == methods::POST)
-		return must_have_atleast_one_fragment(req) && contains_valid_fragments(req);
+		return must_have_atleast_one_path(req) && contains_valid_fragments(req);
 	else if (req.method() == methods::PUT || req.method() == methods::PATCH)
-		return must_have_atleast_one_fragment(req) && contains_valid_fragments(req) 
+		return must_have_atleast_one_path(req) && contains_valid_fragments(req) 
 			&& must_have_atleast_one_query(req) && contains_valid_queries(req) 
 			&& must_have_valid_body(req);
 	else if (req.method() == methods::HEAD || req.method() == methods::OPTIONS)
-		return could_have_fragments(req);
+		return could_have_some_pathes(req);
 	else {
 		std::wcout << "Error: " << "undefined validation on :" << req.method() << " requst" << endl;
 	}
@@ -290,7 +290,7 @@ bool BackEnd::Net::Server::is_a_valid_request(const web::http::http_request& req
 	return false;
 }
 
-bool BackEnd::Net::Server::could_have_fragments(const web::http::http_request& req) {
+bool BackEnd::Net::Server::could_have_some_pathes(const web::http::http_request& req) {
 	const boost::wregex wr(L"\/{1}[a-zA-Z0-9/]*");
 	if (!boost::regex_search(req.relative_uri().to_string(), wr)) {
 		std::wcout << "Error: " << "expecting correct url with optional fragment" << endl;
@@ -300,7 +300,7 @@ bool BackEnd::Net::Server::could_have_fragments(const web::http::http_request& r
 	return true;
 }
 
-bool BackEnd::Net::Server::must_have_atleast_one_fragment(const web::http::http_request& req) {
+bool BackEnd::Net::Server::must_have_atleast_one_path(const web::http::http_request& req) {
 	const boost::wregex wr(L"\/{1}[a-zA-Z0-9/]+");
 	if (!boost::regex_search(req.relative_uri().to_string(), wr)) {
 		std::wcout << "Error: " << "expecting atleast one fragment" << endl;
@@ -362,7 +362,8 @@ bool BackEnd::Net::Server::contains_valid_queries(const web::http::http_request&
 
 		if (!queries.empty()) {
 			for (auto q : queries) {
-				auto fields = data_cntx.get_data_fields(q.first);
+				auto path = req.request_uri().path().substr(1, req.request_uri().path().size() - 1);
+				auto fields = data_cntx.get_data_fields(path);
 				if (std::find(fields.begin(), fields.end(), q.first.c_str()) != fields.end())
 					break;
 				else {
