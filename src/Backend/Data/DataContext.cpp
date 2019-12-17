@@ -274,11 +274,14 @@ std::vector<std::wstring> BackEnd::Data::DataContext::get_data_entities() {
 	};
 }
 
-std::vector<std::wstring> BackEnd::Data::DataContext::get_data_fields(const std::wstring& entity) {
-	auto wstr = L"SELECT name FROM PRAGMA_TABLE_INFO('" + entity + L"')";
-	std::string get_all_fields(wstr.begin(), wstr.end());
-	std::vector<std::wstring> fields;
+bool BackEnd::Data::DataContext::chk_data_field(const std::wstring& entity, const std::wstring& field) {
+	auto wstr = L"SELECT 1 FROM PRAGMA_TABLE_INFO('" + entity + L"') WHERE name='" + field + L"';";
+	std::string check(wstr.begin(), wstr.end());
+	web::json::value result {};
 
-	exe_query(get_all_fields, fields);
-	return fields;
+	exe_query(check, result);
+	if (!result.is_null())
+		return true;
+
+	return false;
 }

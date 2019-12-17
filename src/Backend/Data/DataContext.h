@@ -19,7 +19,7 @@ namespace BackEnd {
 			bool verify_query_and_data(const std::string& query);
 			bool verify_data(const std::string& query);
 			std::vector<std::wstring> get_data_entities();
-			std::vector<std::wstring> get_data_fields(const std::wstring& entity);
+			bool chk_data_field(const std::wstring& entity, const std::wstring& field);
 		
 		protected:
 			DataContext();

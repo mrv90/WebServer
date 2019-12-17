@@ -366,8 +366,7 @@ bool BackEnd::Net::Server::contains_valid_queries(const web::http::http_request&
 		if (!queries.empty()) {
 			for (auto q : queries) {
 				auto path = req.request_uri().path().substr(1, req.request_uri().path().size() - 1);
-				auto fields = data_cntx.get_data_fields(path);
-				if (std::find(fields.begin(), fields.end(), q.first.c_str()) != fields.end())
+				if (data_cntx.chk_data_field(path, q.first.c_str()))
 					break;
 				else {
 					std::wcout << "Error: " << "invalid queries detected inside request!" << endl;
