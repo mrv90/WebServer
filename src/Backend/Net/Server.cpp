@@ -60,6 +60,8 @@ void BackEnd::Net::Server::handle_get(http_request req)
 				web::json::value resp{};
 				answer_request(data_cntx.exe_query(get, resp), req, resp);
 			}
+			else
+				answer_request(req, status_codes::NotFound);
 		}
 		catch (const BackEnd::Data::exception& e)
 		{
