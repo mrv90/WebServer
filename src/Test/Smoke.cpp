@@ -102,6 +102,21 @@ namespace Test {
 			}).wait();
 		}
 
+		TEST_F(Smoke, Student_OnRequestingAllStudents_OK) {
+			auto req = uri_builder(local).append_path(U("student"));
+			cli.make_request(methods::GET, req.to_string(), 0).then([](http_response response) {
+				EXPECT_EQ(response.status_code(), status_codes::OK);
+				response.extract_json().then([](web::json::value result) {
+					web::json::value expected = web::json::value::parse(
+						L"[{\"student_id\": 1, \"name\": \"Ali\",     \"family_name\": \"Naseri\",  \"birth_date\":  \"13700101\"},\
+						   {\"student_id\": 2, \"name\": \"Michael\", \"family_name\": \"Jackson\", \"birth_date\":  \"13700301\"},\
+						   {\"student_id\": 3, \"name\": \"Bob\",     \"family_name\": \"Fisher\",  \"birth_date\":  \"13700401\"},\
+						   {\"student_id\": 4, \"name\": \"Robin\",   \"family_name\": \"Williams\",\"birth_date\":  \"13700501\"}]");
+					EXPECT_EQ(result.serialize(), expected.serialize());
+				}).wait();
+			}).wait();
+		}
+
 		// TODO: OK for TRACE: create a loopback for the request message
 
 		// TODO: stress_test to produce service_not_available
