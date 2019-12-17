@@ -334,9 +334,8 @@ bool BackEnd::Net::Server::must_have_valid_body(const web::http::http_request& r
 	catch (const std::exception&)
 	{
 		std::wcout << "Error: " << "expecting body in json format" << endl;
+		return false;
 	}
-	
-	return false;
 }
 
 bool BackEnd::Net::Server::contains_valid_pathes(const web::http::http_request& req) {
