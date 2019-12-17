@@ -284,6 +284,9 @@ bool BackEnd::Net::Server::is_a_valid_request(const web::http::http_request& req
 		return must_have_atleast_one_path(req) && contains_valid_pathes(req)
 		&& must_have_atleast_one_query(req) && contains_valid_queries(req)
 		&& must_have_valid_body(req);
+	else if (req.method() == methods::DEL)
+		return must_have_atleast_one_path(req) && contains_valid_pathes(req)
+			&& must_have_atleast_one_query(req) && contains_valid_queries(req);
 	else if (req.method() == methods::HEAD || req.method() == methods::OPTIONS)
 		return could_have_some_pathes(req);
 	else {
