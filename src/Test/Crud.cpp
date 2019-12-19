@@ -100,8 +100,8 @@ namespace Test {
 			cli.make_request(methods::GET, req.to_string(), 0).then([](http_response response) {
 				EXPECT_EQ(response.status_code(), status_codes::OK);
 				response.extract_json().then([](web::json::value result) {
-					web::json::value expected = web::json::value::parse(L"{\"class_id\": 1, \
-					\"course_ref\": 1, \"student_ref\": 1}");
+					web::json::value expected = web::json::value::parse(L"[{\"class_id\":1,\"course_ref\":1,\"student_ref\":1},\
+					{\"class_id\":2,\"course_ref\":1,\"student_ref\":2},{\"class_id\":3,\"course_ref\":1,\"student_ref\":3}]");
 					EXPECT_EQ(result.serialize(), expected.serialize());
 				});
 			}).wait();
@@ -163,8 +163,10 @@ namespace Test {
 			cli.make_request(methods::GET, req.to_string(), 0).then([](http_response response) {
 				EXPECT_EQ(response.status_code(), status_codes::OK);
 				response.extract_json().then([](web::json::value result) {
-					web::json::value expected = web::json::value::parse(L"{\"score_id\": 1, \"class_ref\": 1, \"student_ref\": 1,\
-					 \"sem_avg\": 12.5, \"mid_term\": 15, \"final_term\": 17}");
+					web::json::value expected = web::json::value::parse(L"[{\"class_ref\":1,\"final_term\":17,\"mid_term\":15,\"score_id\":1,\
+										\"sem_avg\":12.5,\"student_ref\":1},{\"class_ref\":1,\"final_term\":20,\"mid_term\":14,\"score_id\":2,\
+										\"sem_avg\":17,\"student_ref\":2},{\"class_ref\":1,\"final_term\":18.25,\"mid_term\":14,\"score_id\":3,\
+										\"sem_avg\":19,\"student_ref\":3}]");
 					EXPECT_EQ(result.serialize(), expected.serialize());
 				});
 			}).wait();
