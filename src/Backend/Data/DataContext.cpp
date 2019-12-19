@@ -83,11 +83,16 @@ int BackEnd::Data::DataContext::exe_query(const std::string& query, web::json::v
 		return ret;
 	}
 
-	if (SQLITE_ROW == (ret = sqlite3_step(stmt))) {
-		utility::stringstream_t istrm;
-		istrm << L"{";
-		for (unsigned int i = 0; i <= sqlite3_data_count(stmt); i++) {
+	utility::stringstream_t istrm;
+	istrm << L"[";
 
+	while (SQLITE_ROW == (ret = sqlite3_step(stmt))) {
+		if (istrm.str().size() == 1)
+			istrm << L"{";
+		else
+			istrm << L",{";
+
+		for (unsigned int i = 0; i <= sqlite3_data_count(stmt); i++) {
 			switch (sqlite3_column_type(stmt, i)) 
 			{
 			case (SQLITE_INTEGER):
@@ -119,11 +124,12 @@ int BackEnd::Data::DataContext::exe_query(const std::string& query, web::json::v
 				break;
 			}
 		}
-		
 		istrm << L"}";
-		resp = web::json::value::parse(istrm);
 	}
-	else {
+	istrm << L"]";
+	resp = web::json::value::parse(istrm);
+
+	if (SQLITE_DONE != ret) {
 		std::wcout << "sqlite ret-code: " << ret << ", " << sqlite3_errmsg(con) << std::endl;
 		return ret;
 	}
