@@ -33,8 +33,8 @@ namespace Test {
 			{
 				EXPECT_EQ(response.status_code(), status_codes::OK);
 				response.extract_json().then([](web::json::value result) {
-					web::json::value expected = web::json::value::parse(L"{\"student_id\": 1, \
-					\"name\": \"Ali\", \"family_name\": \"Naseri\", \"birth_date\": \"13700101\"}");
+					web::json::value expected = web::json::value::parse(L"[{\"student_id\": 1, \
+					\"name\": \"Ali\", \"family_name\": \"Naseri\", \"birth_date\": \"13700101\"}]");
 					EXPECT_EQ(result.serialize(), expected.serialize());
 				}).wait();
 			}).wait();
@@ -70,7 +70,7 @@ namespace Test {
 			cli.make_request(methods::GET, req.to_string(), 0).then([](http_response response) {
 				EXPECT_EQ(response.status_code(), status_codes::OK);
 				response.extract_json().then([](web::json::value result) {
-					web::json::value expected = web::json::value::parse(L"{\"course_id\": 2, \"name\": \"Physics\"}");
+					web::json::value expected = web::json::value::parse(L"[{\"course_id\": 2, \"name\": \"Physics\"}]");
 					EXPECT_EQ(result.serialize(), expected.serialize());
 				});
 			}).wait();
@@ -130,7 +130,7 @@ namespace Test {
 			auto req = uri_builder(local).append_path(U("quiz")).append_query(U("class_ref=1"));
 			cli.make_request(methods::GET, req.to_string(), 0).then([](http_response response) {
 				response.extract_json().then([](web::json::value result) {
-					web::json::value expected = web::json::value::parse(L"{\"class_ref\":1,\"quiz_id\":1,\"grade\":17.5,\"student_ref\":1}");
+					web::json::value expected = web::json::value::parse(L"[{\"class_ref\":1,\"quiz_id\":1,\"grade\":17.5,\"student_ref\":1}]");
 					EXPECT_EQ(result.serialize(), expected.serialize());
 				});
 			}).wait();
