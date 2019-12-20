@@ -33,8 +33,8 @@ namespace Test {
 			{
 				EXPECT_EQ(response.status_code(), status_codes::OK);
 				response.extract_json().then([](web::json::value result) {
-					web::json::value expected = web::json::value::parse(L"[{\"student_id\": 1, \
-					\"name\": \"Ali\", \"family_name\": \"Naseri\", \"birth_date\": \"13700101\"}]");
+					web::json::value expected = web::json::value::parse(L"{\"student_id\": 1, \
+					\"name\": \"Ali\", \"family_name\": \"Naseri\", \"birth_date\": \"13700101\"}");
 					EXPECT_EQ(result.serialize(), expected.serialize());
 				}).wait();
 			}).wait();
