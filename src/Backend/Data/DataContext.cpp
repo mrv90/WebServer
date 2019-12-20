@@ -140,64 +140,6 @@ int BackEnd::Data::DataContext::exe_query(const std::string& query, web::json::v
 	return SQLITE_OK;
 }
 
-int BackEnd::Data::DataContext::exe_query(const std::string& query, std::vector<std::wstring> &resp) {
-	int ret = -1;
-	sqlite3_stmt* stmt = NULL;
-
-	if (SQLITE_OK != (ret = sqlite3_prepare_v2(con, query.c_str(), -1, &stmt, NULL))) {
-		auto err = sqlite3_errmsg(con);
-		return ret;
-	}
-
-	if (SQLITE_ROW == (ret = sqlite3_step(stmt))) {
-		utility::stringstream_t istrm;
-		for (unsigned int i = 0; i <= sqlite3_data_count(stmt); i++) {
-			switch (sqlite3_column_type(stmt, i))
-			{
-			case (SQLITE_INTEGER):
-				(0 < i && i < sqlite3_data_count(stmt)) ?
-					istrm << L", " << sqlite3_column_int(stmt, i) :
-					istrm << sqlite3_column_int(stmt, i);
-				break;
-			case (SQLITE_TEXT):
-				(0 < i && i < sqlite3_data_count(stmt)) ?
-					istrm << L", " << (const wchar_t*)sqlite3_column_text(stmt, i) :
-					istrm << (const wchar_t*)sqlite3_column_text(stmt, i);
-				break;
-			case (SQLITE_FLOAT):
-				(0 < i && i < sqlite3_data_count(stmt)) ?
-					istrm << (L", ") << sqlite3_column_double(stmt, i) :
-					istrm << sqlite3_column_double(stmt, i);
-				break;
-			case (SQLITE_BLOB):
-				(0 < i && i < sqlite3_data_count(stmt)) ?
-					istrm << L", \"" << sqlite3_column_blob(stmt, i) << L"\"":
-					istrm << L"\"" << sqlite3_column_blob(stmt, i) << L"\"";
-				break;
-			case (SQLITE_NULL): // end-of-data flag
-				break;
-			default:
-				(0 < i && i < sqlite3_data_count(stmt)) ?
-					istrm << L", \"" << sqlite3_column_value(stmt, i) << L"\"" :
-					istrm << L"\"" << sqlite3_column_value(stmt, i) << L"\"";
-				break;
-			}
-
-			resp.push_back(istrm.str());
-			istrm.clear();
-		}
-	}
-	else {
-		std::wcout << "sqlite ret-code: " << ret << ", " << sqlite3_errmsg(con) << std::endl;
-		return ret;
-	}
-
-	if (NULL != stmt)
-		sqlite3_finalize(stmt);
-
-	return SQLITE_OK;
-}
-
 bool BackEnd::Data::DataContext::verify_query_and_data(const std::string& query) {
 	int ret = -1;
 	sqlite3_stmt* stmt = NULL;
