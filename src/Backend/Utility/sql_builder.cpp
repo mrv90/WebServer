@@ -56,13 +56,13 @@ std::string sql_builder::to_create_or_replace_cmd(const web::http::http_request&
 	return std::string(sql.begin(), sql.end());
 }
 
-std::string sql_builder::to_update_cmd(const web::http::http_request& req, const std::wstring& body)
+std::string sql_builder::to_update_cmd(const web::http::http_request& req, const std::wstring& json_style_body)
 {
 	// TODO: add exception 
 	// TODO: ucout result of to_update
 	std::wstring sql(L"UPDATE ");
 	sql.append(req.request_uri().path().substr(1, req.request_uri().path().size() -1));
-	sql.append(L" SET " + wrap_by_quotation(body));// +L" WHERE ");
+	sql.append(L" SET " + convert_to_sql_format(json_style_body));// +L" WHERE ");
 	add_queries(req, sql);
 	return std::string(sql.begin(), sql.end());
 }
@@ -131,4 +131,18 @@ bool sql_builder::primary_key_requested(const web::http::http_request & req)
 		return true;
 
 	return false;
+}
+
+std::wstring sql_builder::convert_to_sql_format(const std::wstring& json_style) {
+	std::string body = std::string(json_style.begin(), json_style.end());
+	boost::regex key("[a-zA-Z0-9_]+(?=\":)");
+	boost::regex val("[a-zA-Z0-9_]+(?=(\"}|}))");
+	boost::smatch key_result;
+	boost::smatch val_result;
+
+	boost::regex_search(body, key_result, key);
+	boost::regex_search(body, val_result, val);
+
+	std::string result = key_result[0].str() + "='" + val_result[0].str() + "'";
+	return std::wstring(result.begin(), result.end());
 }
