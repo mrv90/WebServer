@@ -86,7 +86,10 @@ namespace Test {
 			}).wait();
 		}
 		TEST_F(Crud, Course_OnIsolatedDeleting_Success) {
-			EXPECT_EQ(true, false);
+			auto req = uri_builder(local).append_path(U("course")).append_query(U("course_id=3"));
+			cli.make_request(methods::DEL, req.to_string(), 0).then([](http_response response) {
+				EXPECT_EQ(response.status_code(), status_codes::OK);
+			}).wait();
 		}
 
 

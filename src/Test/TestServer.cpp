@@ -13,7 +13,7 @@ Test::TestServer::~TestServer()
 void Test::TestServer::WriteSampleData()
 {
 	const char* data = 
-		 "INSERT INTO course VALUES (1, 'Math'), (2, 'Physics'); \
+		 "INSERT INTO course VALUES (1, 'Math'), (2, 'Physics'), (3, 'Art'); \
 		  \
 		  INSERT INTO student VALUES (1, 'Ali', 'Naseri', '13700101'), (2, 'Michael', 'Jackson', '13700301'), \
 					 (3, 'Bob', 'Fisher', '13700401'), (4, 'Robin', 'Williams', '13700501'); \
