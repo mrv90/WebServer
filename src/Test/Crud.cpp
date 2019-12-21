@@ -41,14 +41,14 @@ namespace Test {
 		}
 		TEST_F(Crud, Student_OnUpdating_Success) {
 			auto req = uri_builder(local).append_path(U("student")).append_query(U("family_name=Naseri"));
-			auto body = web::json::value(U("name=Alireza"));
+			auto body = web::json::value(U("{\"name\":\"Alireza\"}"));
 			cli.make_request(methods::PUT, req.to_string(), body).then([](http_response response) {
 				EXPECT_EQ(response.status_code(), status_codes::OK);
 			}).wait();
 		}
 		TEST_F(Crud, Student_OnPatching_Success) {
 			auto req = uri_builder(local).append_path(U("student")).append_query(U("family_name=Naseri"));
-			auto body = web::json::value(U("name=Alireza"));
+			auto body = web::json::value(U("{\"name\":\"Alireza\"}"));
 			cli.make_request(methods::PATCH, req.to_string(), body).then([](http_response response) {
 				EXPECT_EQ(response.status_code(), status_codes::OK);
 			}).wait();
@@ -77,7 +77,7 @@ namespace Test {
 		}
 		TEST_F(Crud, Course_OnUpdating_Success) {
 			auto req = uri_builder(local).append_path(U("course")).append_query(U("name=Math"));
-			auto body = web::json::value(U("name=Mathematics"));
+			auto body = web::json::value(U("{\"name\":\"Mathematics\"}"));
 			cli.make_request(methods::PUT, req.to_string(), body).then([](http_response response) {
 				EXPECT_EQ(response.status_code(), status_codes::OK);
 			}).wait();
@@ -108,7 +108,7 @@ namespace Test {
 		}
 		TEST_F(Crud, Class_OnUpdating_Success) {
 			auto req = uri_builder(local).append_path(U("class")).append_query(U("course_ref=1"));
-			auto body = web::json::value(U("student_ref=1"));
+			auto body = web::json::value(U("{\"student_ref\":1}"));
 			cli.make_request(methods::PUT, req.to_string(), body).then([](http_response response) {
 				EXPECT_EQ(response.status_code(), status_codes::OK);
 			}).wait();
@@ -137,7 +137,7 @@ namespace Test {
 		}
 		TEST_F(Crud, Quiz_OnUpdating_Success) {
 			auto req = uri_builder(local).append_path(U("quiz")).append_query(U("quiz_id=2"));
-			auto body = web::json::value(U("grade=20"));
+			auto body = web::json::value(U("{\"grade\":20}"));
 			cli.make_request(methods::PUT, req.to_string(), body).then([](http_response response) {
 				EXPECT_EQ(response.status_code(), status_codes::OK);
 			}).wait();
@@ -173,7 +173,7 @@ namespace Test {
 		}
 		TEST_F(Crud, Score_OnUpdating_Success) {
 			auto req = uri_builder(local).append_path(U("score")).append_query(U("class_ref=1"));
-			auto body = web::json::value(U("final_term=20"));
+			auto body = web::json::value(U("{\"final_term\":20}"));
 			cli.make_request(methods::PUT, req.to_string(), body).then([](http_response response) {
 				EXPECT_EQ(response.status_code(), status_codes::OK);
 			}).wait();
