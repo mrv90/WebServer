@@ -110,13 +110,7 @@ void BackEnd::Net::Server::handle_put(http_request req)
 			if (data_cntx.verify_query_and_data(chk_exist) == false)
 				answer_request(req, status_codes::NotFound);
 
-			std::wstring req_body = L"";
-			auto body = req.extract_string().then([&req_body](std::wstring ret_body) {
-				req_body = ret_body;
-				req_body.erase(std::remove(req_body.begin(), req_body.end(), '\"'), req_body.end());
-			}).wait();
-			std::string update = sql_builder().to_update_cmd(req, req_body);
-
+			std::string update = sql_builder().to_update_cmd(req, req.extract_json(true).get().as_string());
 			answer_request(data_cntx.exe_cmd(update), req);
 		}
 		catch (const BackEnd::Data::exception& e)
@@ -139,13 +133,7 @@ void BackEnd::Net::Server::handle_patch(http_request req)
 	print_requst_date(req);
 	
 	if (is_a_valid_request(req)) {
-		std::wstring req_body = L"";
-		auto body = req.extract_string().then([&req_body](std::wstring ret_body) {
-			req_body = ret_body;
-			req_body.erase(std::remove(req_body.begin(), req_body.end(), '\"'), req_body.end());
-		}).wait();
-		std::string update = sql_builder().to_update_cmd(req, req_body);
-
+		std::string update = sql_builder().to_update_cmd(req, req.extract_json(true).get().as_string());
 		answer_request(data_cntx.exe_cmd(update.c_str()), req);
 	}
 	else
