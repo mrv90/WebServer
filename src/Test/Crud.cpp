@@ -54,7 +54,10 @@ namespace Test {
 			}).wait();
 		}
 		TEST_F(Crud, Student_OnIsolatedDeleting_Success) {
-			EXPECT_EQ(true, false);
+			auto req = uri_builder(local).append_path(U("student")).append_query(U("student_id=4"));
+			cli.make_request(methods::DEL, req.to_string(), 0).then([](http_response response) {
+				EXPECT_EQ(response.status_code(), status_codes::OK);
+			}).wait();
 		}
 
 
@@ -114,7 +117,10 @@ namespace Test {
 			}).wait();
 		}
 		TEST_F(Crud, Class_OnIsolatedDeleting_Success) {
-			EXPECT_EQ(true, false);
+			auto req = uri_builder(local).append_path(U("class")).append_query(U("class_id=1"));
+			cli.make_request(methods::DEL, req.to_string(), 0).then([](http_response response) {
+				EXPECT_EQ(response.status_code(), status_codes::OK);
+			}).wait();
 		}
 
 
@@ -145,7 +151,7 @@ namespace Test {
 			}).wait();
 		}
 		TEST_F(Crud, Quiz_OnIsolatedDeleting_Success) {
-			auto req = uri_builder(local).append_path(U("quiz")).append_query(U("class_ref=1"));
+			auto req = uri_builder(local).append_path(U("quiz")).append_query(U("quiz_id=1"));
 			cli.make_request(methods::DEL, req.to_string(), 0).then([](http_response response) {
 				EXPECT_EQ(response.status_code(), status_codes::OK);
 			}).wait();
@@ -181,7 +187,10 @@ namespace Test {
 			}).wait();
 		}
 		TEST_F(Crud, Score_OnIsolatedDeleting_Success) {
-			EXPECT_EQ(true, false);
+			auto req = uri_builder(local).append_path(U("score")).append_query(U("score_id=1"));
+			cli.make_request(methods::DEL, req.to_string(), 0).then([](http_response response) {
+				EXPECT_EQ(response.status_code(), status_codes::OK);
+			}).wait();
 		}
 	}
 }
