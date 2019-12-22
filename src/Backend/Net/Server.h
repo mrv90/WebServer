@@ -45,7 +45,7 @@ namespace BackEnd {
 			void print_requst_date(const web::http::http_request& req);
 			
 			// TODO refactore below functionality/methods to new class
-			bool contains_id(const web::http::http_request& req);
+			bool contains_id_equal_to_minus_one(const web::http::http_request& req);
 			bool is_a_valid_request(const web::http::http_request& req);
 			bool could_have_some_pathes(const web::http::http_request& req);
 			bool must_have_atleast_one_path(const web::http::http_request& req);

@@ -83,16 +83,17 @@ void BackEnd::Net::Server::handle_post(http_request req)
 	print_requst_date(req);
 
 	if (is_a_valid_request(req)) {
-		if (contains_id(req))
-			answer_request(req, status_codes::MethodNotAllowed);
-
-		std::string chk_exist = sql_builder().to_select_query(req);
-		if (data_cntx.verify_data(chk_exist) == false) {
-			std::string create = sql_builder().to_create_or_replace_cmd(req);
-			answer_request(data_cntx.exe_cmd(create), req);
+		if (contains_id_equal_to_minus_one(req)) {
+			std::string chk_exist = sql_builder().to_select_query(req);
+			if (data_cntx.verify_data(chk_exist) == false) {
+				std::string create = sql_builder().to_create_or_replace_cmd(req);
+				answer_request(data_cntx.exe_cmd(create), req);
+			}
+			else
+				answer_request(req, status_codes::Conflict); // duplicated data
 		}
 		else
-			answer_request(req, status_codes::Conflict); // duplicated data
+			answer_request(req, status_codes::MethodNotAllowed);
 	}
 	else
 		answer_request(req, status_codes::BadRequest);
@@ -232,9 +233,9 @@ void BackEnd::Net::Server::answer_request(const web::http::http_request & req, c
 	std::wcout << "------------------------------------------------------------------" << endl;
 }
 
-bool BackEnd::Net::Server::contains_id(const web::http::http_request& req) {
+bool BackEnd::Net::Server::contains_id_equal_to_minus_one(const web::http::http_request& req) {
 
-	const boost::wregex id(L"_id");
+	const boost::wregex id(L"_id=-1");
 	return boost::regex_search(req.absolute_uri().to_string(), id);
 }
 
