@@ -21,8 +21,8 @@ namespace Test {
 
 		// working with STUDENT entity
 		TEST_F(Crud, Student_OnCreating_Success) {
-			auto req = uri_builder(local).append_path(U("student")).append_query(U("name=Mohsen"))
-				.append_query(U("family_name=Shiri")).append_query(U("birth_date=13710101"));
+			auto req = uri_builder(local).append_path(U("student")).append_query(U("student_id=-1"))
+				.append_query(U("name=Mohsen")).append_query(U("family_name=Shiri")).append_query(U("birth_date=13710101"));
 			cli.make_request(methods::POST, req.to_string(), 0).then([](http_response response) {
 				EXPECT_EQ(response.status_code(), status_codes::Created);
 			}).wait();
@@ -63,7 +63,7 @@ namespace Test {
 
 		// working with COURSE entity
 		TEST_F(Crud, Course_OnCreating_Success) {
-			auto req = uri_builder(local).append_path(U("course")).append_query(U("name=Geography"));
+			auto req = uri_builder(local).append_path(U("course")).append_query(U("course_id=-1")).append_query(U("name=Geography"));
 			cli.make_request(methods::POST, req.to_string(), 0).then([](http_response response) {
 				EXPECT_EQ(response.status_code(), status_codes::Created);
 			}).wait();
@@ -95,8 +95,8 @@ namespace Test {
 
 		// woring with CLASS entity
 		TEST_F(Crud, Class_OnCreating_Success) {
-			auto req = uri_builder(local).append_path(U("class")).append_query(U("course_ref=1"))
-				.append_query(U("student_ref=2")).append_query(U("score_ref=1"));
+			auto req = uri_builder(local).append_path(U("class")).append_query(U("class_id=-1"))
+				.append_query(U("course_ref=1")).append_query(U("student_ref=2")).append_query(U("score_ref=1"));
 			cli.make_request(methods::POST, req.to_string(), 0).then([](http_response response) {
 				EXPECT_EQ(response.status_code(), status_codes::Created);
 			}).wait();
@@ -129,8 +129,8 @@ namespace Test {
 
 		// working with QUIZ entity 
 		TEST_F(Crud, Quiz_OnCreating_Success) {
-			auto req = uri_builder(local).append_path(U("quiz")).append_query(U("class_ref=2"))
-				.append_query(U("student_ref=2")).append_query(U("grade:18"));
+			auto req = uri_builder(local).append_path(U("quiz")).append_query(U("quiz_id=-1"))
+				.append_query(U("class_ref=2")).append_query(U("student_ref=2")).append_query(U("grade:18"));
 			cli.make_request(methods::POST, req.to_string(), 0).then([](http_response response) {
 				EXPECT_EQ(response.status_code(), status_codes::Created);
 			}).wait();
@@ -163,8 +163,8 @@ namespace Test {
 
 		// working with SCORE entity
 		TEST_F(Crud, Score_OnCreating_Success) {
-			auto req = uri_builder(local).append_path(U("score")).append_query(U("class_ref=1")).append_query(U("student_ref=2"))
-				.append_query(U("sem_avg=14")).append_query(U("mid_term=18")).append_query(U("final_term=11"));
+			auto req = uri_builder(local).append_path(U("score")).append_query(U("score_id=-1")).append_query(U("class_ref=1"))
+				.append_query(U("student_ref=2")).append_query(U("sem_avg=14")).append_query(U("mid_term=18")).append_query(U("final_term=11"));
 			cli.make_request(methods::POST, req.to_string(), 0).then([](http_response response) {
 				EXPECT_EQ(response.status_code(), status_codes::Created);
 			}).wait();
