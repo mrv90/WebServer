@@ -11,21 +11,28 @@ sql_builder::~sql_builder()
 
 std::string sql_builder::to_select_query(const web::http::http_request& req)
 {
-	// TODO: remove id and enable from all responses
-	// TODO: add exception 
-	// TODO: ucout result of to_select
-	std::wstring sql(L"SELECT ");
-
-	auto pathes = req.request_uri().split_path(req.request_uri().path());
+	boost::regex first_path_pattern("(?<=^\/)([a-zA-Z0-9]+)(?=\/)");
+	boost::smatch first_path_result;
+	boost::regex other_pathes_pattern("(?<=(.+\/))([a-zA-Z0-9]+)(?=\/)"); //	(?<=\w+\/)([a-zA-Z0-9]+)(?=\/)	([a-zA-Z0-9]+)(?=\/)
+	boost::smatch other_pathes_result;
+	boost::regex queries_pattern("(?<=(\/\?|\&))[a-zA-Z0-9_=-]+");
+	boost::smatch queries_result;
 	
-	if (pathes.size() > 1)
-		add_pathes(req, sql);
-	else
-		sql.append(L"*");
-		
-	sql.append(L" FROM " + pathes.at(0));
-	add_queries(req, sql);
-	return std::string(sql.begin(), sql.end());
+	std::string url(req.relative_uri().to_string().begin(), req.relative_uri().to_string().end());
+
+	boost::regex_search(url, first_path_result, first_path_pattern);
+	boost::regex_search(url, other_pathes_result, other_pathes_pattern);
+	boost::regex_search(url, queries_result, queries_pattern);
+
+	std::string sql("SELECT ");
+	for (auto i = 0; i <= other_pathes_result.size(); i++)
+		i > 0 ? sql.append(", " + queries_result[i].str()) : sql.append(queries_result[i].str());
+	sql.append("FROM " + first_path_result.empty() == false ? first_path_result[0].str() : "* ");
+	sql.append("WHERE ");
+	for (auto i = 0; i <= queries_result.size(); i++)
+		i > 0 ? sql.append("and " + queries_result[i].str()) : queries_result[i].str();
+
+	return sql;
 }
 
 std::string sql_builder::to_create_or_replace_cmd(const web::http::http_request& req)
