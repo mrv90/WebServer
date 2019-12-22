@@ -184,27 +184,34 @@ int BackEnd::Data::DataContext::ApplyDbStructure()
 		CREATE TABLE IF NOT EXISTS score\
 		(\
 			score_id INTEGER PRIMARY KEY,\
-			class_ref INTEGER REFERENCES class(class_id) ON UPDATE CASCADE ON DELETE RESTRICT,\
-			student_ref INTEGER REFERENCES student(student_id) ON UPDATE CASCADE ON DELETE RESTRICT,\
+			class_ref INTEGER,\
+			student_ref INTEGER,\
 			sem_avg FLOAT,\
 			mid_term FLOAT,\
-			final_term INTEGER\
+			final_term INTEGER,\
+			FOREIGN KEY(class_ref) REFERENCES class(class_id) ON UPDATE CASCADE ON DELETE RESTRICT,\
+			FOREIGN KEY(student_ref) REFERENCES student(student_id) ON UPDATE CASCADE ON DELETE RESTRICT\
 		);\
 		\
 		CREATE TABLE IF NOT EXISTS class\
 		(\
 			class_id INTEGER PRIMARY KEY,\
-			course_ref INTEGER REFERENCES course(course_id) ON UPDATE CASCADE ON DELETE RESTRICT,\
-			student_ref INTEGER REFERENCES student(student_id) ON UPDATE CASCADE ON DELETE RESTRICT,\
-			score_ref INTEGER REFERENCES score(score_id) ON UPDATE CASCADE ON DELETE RESTRICT\
-			);\
+			course_ref INTEGER,\
+			student_ref INTEGER,\
+			score_ref INTEGER,\
+			FOREIGN KEY(course_ref) REFERENCES course(course_id) ON UPDATE CASCADE ON DELETE RESTRICT,\
+			FOREIGN KEY(student_ref) REFERENCES student(student_id) ON UPDATE CASCADE ON DELETE RESTRICT,\
+			FOREIGN KEY(score_ref) REFERENCES score(score_id) ON UPDATE CASCADE ON DELETE RESTRICT\
+		);\
 		\
 		CREATE TABLE IF NOT EXISTS quiz\
 		(\
 			quiz_id INTEGER PRIMARY KEY,\
-			class_ref INTEGER REFERENCES class(class_id) ON UPDATE CASCADE,\
-			student_ref INTEGER REFERENCES student(student_id) ON UPDATE CASCADE,\
-			grade INTEGER\
+			class_ref INTEGER,\
+			student_ref INTEGER,\
+			grade INTEGER,\
+			FOREIGN KEY(class_ref) REFERENCES class(class_id) ON UPDATE CASCADE,\
+			FOREIGN KEY(student_ref) REFERENCES student(student_id) ON UPDATE CASCADE\
 		);\
 		\
 		PRAGMA foreign_keys = ON;";
