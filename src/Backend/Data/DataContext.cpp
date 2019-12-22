@@ -205,7 +205,9 @@ int BackEnd::Data::DataContext::ApplyDbStructure()
 			class_ref INTEGER REFERENCES class(class_id) ON UPDATE CASCADE,\
 			student_ref INTEGER REFERENCES student(student_id) ON UPDATE CASCADE,\
 			grade INTEGER\
-		);";
+		);\
+		\
+		PRAGMA foreign_keys = ON;";
 
 	int ret = -1;
 	if (SQLITE_OK != (ret = exe_cmd(alter_db_structure))) {
