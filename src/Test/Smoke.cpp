@@ -42,7 +42,7 @@ namespace Test {
 		}
 
 		TEST_F(Smoke, Course_OnDoubleCreating_Conflict) {
-			auto req = uri_builder(local).append_path(U("course")).append_query(U("name=Physics"));
+			auto req = uri_builder(local).append_path(U("course")).append_query(U("course_id=-1")).append_query(U("name=Physics"));
 			cli.make_request(methods::POST, req.to_string(), 0).then([](http_response response) {
 				EXPECT_EQ(response.status_code(), status_codes::Conflict); // Conflict for already existing data
 			}).wait();
