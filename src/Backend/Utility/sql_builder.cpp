@@ -11,26 +11,33 @@ sql_builder::~sql_builder()
 
 std::string sql_builder::to_select_query(const web::http::http_request& req)
 {
-	boost::regex first_path_pattern("(?<=^\/)([a-zA-Z0-9]+)(?=\/)");
+	const boost::regex first_path_pattern("(?<=^\/)([a-zA-Z0-9]+)");
 	boost::smatch first_path_result;
-	boost::regex other_pathes_pattern("(?<=(.\/))([a-zA-Z0-9]+)(?=\/)");
+	const boost::regex other_pathes_pattern("(?<=(.\/))(\w+)");
 	boost::smatch other_pathes_result;
-	boost::regex queries_pattern("(?<=(\?|\&))[a-zA-Z0-9_=-]+");
+	const boost::regex queries_pattern("(?<=(\?|\&))[a-zA-Z0-9_=-]+");
 	boost::smatch queries_result;;
 	
-	std::string url(req.relative_uri().to_string().begin(), req.relative_uri().to_string().end());
+	std::string url = utility::conversions::utf16_to_utf8(req.relative_uri().to_string());
 
 	boost::regex_search(url, first_path_result, first_path_pattern);
 	boost::regex_search(url, other_pathes_result, other_pathes_pattern);
 	boost::regex_search(url, queries_result, queries_pattern);
 
 	std::string sql("SELECT ");
-	for (auto i = 0; i <= other_pathes_result.size(); i++)
-		i > 0 ? sql.append(", " + queries_result[i].str()) : sql.append(queries_result[i].str());
-	sql.append("FROM " + first_path_result.empty() == false ? first_path_result[0].str() : "* ");
-	sql.append("WHERE ");
-	for (auto i = 0; i <= queries_result.size(); i++)
-		i > 0 ? sql.append("and " + queries_result[i].str()) : queries_result[i].str();
+	for (unsigned int i = 0; i <= other_pathes_result.size(); i++) {
+		if (!other_pathes_result[i].str().empty())
+			(i > 0) ? sql.append(", " + other_pathes_result[i].str()) : sql.append(other_pathes_result[i].str());
+	}
+	if (sql.compare(sql.c_str()) == 0)
+		sql.append("* ");
+	sql.append("FROM ").append(first_path_result.empty() == false ? first_path_result[0].str() : "* ");
+	sql.append(" WHERE ");
+	for (unsigned int i = 0; i <= queries_result.size(); i++) {
+		if (!queries_result[i].str().empty()) {
+			(i > 0) ? sql.append(" AND " + queries_result[i].str()) : sql.append(queries_result[i].str());
+		}
+	}
 
 	return sql;
 }
