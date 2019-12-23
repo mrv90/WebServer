@@ -13,10 +13,10 @@ std::string sql_builder::to_select_query(const web::http::http_request& req)
 {
 	boost::regex first_path_pattern("(?<=^\/)([a-zA-Z0-9]+)(?=\/)");
 	boost::smatch first_path_result;
-	boost::regex other_pathes_pattern("(?<=(.+\/))([a-zA-Z0-9]+)(?=\/)"); //	(?<=\w+\/)([a-zA-Z0-9]+)(?=\/)	([a-zA-Z0-9]+)(?=\/)
+	boost::regex other_pathes_pattern("(?<=(.\/))([a-zA-Z0-9]+)(?=\/)");
 	boost::smatch other_pathes_result;
-	boost::regex queries_pattern("(?<=(\/\?|\&))[a-zA-Z0-9_=-]+");
-	boost::smatch queries_result;
+	boost::regex queries_pattern("(?<=(\?|\&))[a-zA-Z0-9_=-]+");
+	boost::smatch queries_result;;
 	
 	std::string url(req.relative_uri().to_string().begin(), req.relative_uri().to_string().end());
 
