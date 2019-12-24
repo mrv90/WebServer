@@ -28,12 +28,14 @@ std::string sql_builder::to_select_query(const web::http::http_request& req)
 	boost::regex_search(url, path_rslt, path_ptrn);
 	sql.append("FROM ").append(path_rslt.empty() == false ? path_rslt[0].str() : "* ");
 
-	const boost::regex q_ptrn("[a-zA-Z0-9_=-]+((?=&)|(?=$))"); // q or queries
-	boost::sregex_token_iterator q_itr(url.begin(), url.end(), q_ptrn, 0);
-	sql.append(" WHERE ");
-	start = q_itr;
-	for (; q_itr != end; q_itr++)
-		*start != *q_itr ? sql.append(" AND " + *q_itr) : sql.append(*q_itr);
+	if (!req.relative_uri().query().empty()) {
+		const boost::regex q_ptrn("[a-zA-Z0-9_=-]+((?=&)|(?=$))"); // q or queries
+		boost::sregex_token_iterator q_itr(url.begin(), url.end(), q_ptrn, 0);
+		sql.append(" WHERE ");
+		start = q_itr;
+		for (; q_itr != end; q_itr++)
+			*start != *q_itr ? sql.append(" AND " + wrap_by_quotation(*q_itr)) : sql.append(wrap_by_quotation(*q_itr));
+	}
 
 	return sql;
 }
@@ -131,6 +133,12 @@ std::wstring sql_builder::wrap_by_quotation(const std::wstring& equation)
 		std::string(equation.begin(), equation.end()), after_equal_sign, "'$0'");
 
 	return std::wstring(result.begin(), result.end());
+}
+
+std::string sql_builder::wrap_by_quotation(const std::string& equation)
+{
+	boost::regex after_equal_sign("((?<==)[a-zA-Z0-9.]+)"); // we have float in data; 17.5 has single dot
+	return boost::regex_replace(equation, after_equal_sign, "'$0'");
 }
 
 bool sql_builder::primary_key_requested(const web::http::http_request & req)

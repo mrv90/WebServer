@@ -18,6 +18,7 @@ private:
 	void add_pathes(const web::http::http_request& req, std::wstring &sql);
 	void add_queries(const web::http::http_request& req, std::wstring &sql);
 	std::wstring wrap_by_quotation(const std::wstring& equation);
+	std::string wrap_by_quotation(const std::string& equation);
 	bool primary_key_requested(const web::http::http_request& req);
 	std::wstring convert_to_sql_format(const std::wstring& json_style);
 };
