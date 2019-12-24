@@ -28,7 +28,7 @@ std::string sql_builder::to_select_query(const web::http::http_request& req)
 	boost::regex_search(url, path_rslt, path_ptrn);
 	sql.append("FROM ").append(path_rslt.empty() == false ? path_rslt[0].str() : "* ");
 
-	const boost::regex q_ptrn("(?<=(\?|\&))[a-zA-Z0-9_=-]+"); // q or queries
+	const boost::regex q_ptrn("[a-zA-Z0-9_=-]+((?=&)|(?=$))"); // q or queries
 	boost::sregex_token_iterator q_itr(url.begin(), url.end(), q_ptrn, 0);
 	sql.append(" WHERE ");
 	start = q_itr;
