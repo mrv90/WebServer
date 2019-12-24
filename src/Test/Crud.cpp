@@ -130,7 +130,7 @@ namespace Test {
 		// working with QUIZ entity 
 		TEST_F(Crud, Quiz_OnCreating_Success) {
 			auto req = uri_builder(local).append_path(U("quiz")).append_query(U("quiz_id=-1"))
-				.append_query(U("class_ref=2")).append_query(U("student_ref=2")).append_query(U("grade:18"));
+				.append_query(U("class_ref=2")).append_query(U("student_ref=2")).append_query(U("grade=18"));
 			cli.make_request(methods::POST, req.to_string(), 0).then([](http_response response) {
 				EXPECT_EQ(response.status_code(), status_codes::Created);
 			}).wait();
