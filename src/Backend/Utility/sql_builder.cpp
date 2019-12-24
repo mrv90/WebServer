@@ -11,33 +11,29 @@ sql_builder::~sql_builder()
 
 std::string sql_builder::to_select_query(const web::http::http_request& req)
 {
-	const boost::regex first_path_pattern("(?<=^\/)([a-zA-Z0-9]+)");
-	boost::smatch first_path_result;
-	const boost::regex other_pathes_pattern("(?<=(.\/))(\w+)");
-	boost::smatch other_pathes_result;
-	const boost::regex queries_pattern("(?<=(\?|\&))[a-zA-Z0-9_=-]+");
-	boost::smatch queries_result;;
-	
 	std::string url = utility::conversions::utf16_to_utf8(req.relative_uri().to_string());
-
-	boost::regex_search(url, first_path_result, first_path_pattern);
-	boost::regex_search(url, other_pathes_result, other_pathes_pattern);
-	boost::regex_search(url, queries_result, queries_pattern);
-
 	std::string sql("SELECT ");
-	for (unsigned int i = 0; i <= other_pathes_result.size(); i++) {
-		if (!other_pathes_result[i].str().empty())
-			(i > 0) ? sql.append(", " + other_pathes_result[i].str()) : sql.append(other_pathes_result[i].str());
-	}
+	const boost::sregex_token_iterator end;
+	
+	const boost::regex opath_ptrn("(?<=(.\/))(\w+)"); // other pathes pattern or opath_ptrn
+	boost::sregex_token_iterator opath_itr(url.begin(), url.end(), opath_ptrn, 0);
+	auto start = opath_itr;
+	for (; opath_itr != end; opath_itr++)
+		*start != *opath_itr ? sql.append(*opath_itr + ", ") : sql.append(*opath_itr);
 	if (sql.compare(sql.c_str()) == 0)
 		sql.append("* ");
-	sql.append("FROM ").append(first_path_result.empty() == false ? first_path_result[0].str() : "* ");
+
+	const boost::regex path_ptrn("(?<=^\/)([a-zA-Z0-9]+)"); // main math or simply path
+	boost::smatch path_rslt;
+	boost::regex_search(url, path_rslt, path_ptrn);
+	sql.append("FROM ").append(path_rslt.empty() == false ? path_rslt[0].str() : "* ");
+
+	const boost::regex q_ptrn("(?<=(\?|\&))[a-zA-Z0-9_=-]+"); // q or queries
+	boost::sregex_token_iterator q_itr(url.begin(), url.end(), q_ptrn, 0);
 	sql.append(" WHERE ");
-	for (unsigned int i = 0; i <= queries_result.size(); i++) {
-		if (!queries_result[i].str().empty()) {
-			(i > 0) ? sql.append(" AND " + queries_result[i].str()) : sql.append(queries_result[i].str());
-		}
-	}
+	start = q_itr;
+	for (; q_itr != end; q_itr++)
+		*start != *q_itr ? sql.append(" AND " + *q_itr) : sql.append(*q_itr);
 
 	return sql;
 }
