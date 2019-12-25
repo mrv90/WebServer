@@ -28,4 +28,5 @@ private:
 	bool primary_key_requested(const web::http::http_request& req);
 	std::wstring convert_to_sql_format(const std::wstring& json_style);
 	std::string convert_to_sql_format(const std::string& json_style);
+	void replace_minus_one_id_with_null(std::string& s);
 };

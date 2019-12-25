@@ -23,6 +23,9 @@ std::string sql_builder::to_select_query(const web::http::http_request& req)
 
 	if (!req.relative_uri().query().empty())
 		add_pair_queries(url, sql, " WHERE ");
+	
+	if (req.method() == web::http::methods::POST)
+		replace_minus_one_id_with_null(sql);
 
 	return sql;
 }
@@ -30,11 +33,15 @@ std::string sql_builder::to_select_query(const web::http::http_request& req)
 std::string sql_builder::to_create_or_replace_cmd(const web::http::http_request& req)
 {
 	std::string url = utility::conversions::utf16_to_utf8(req.relative_uri().to_string());
+
 	std::string sql("INSERT ");
 	add_root_path(url, sql, "INTO ");
 
 	if (!req.relative_uri().query().empty())
 		add_value_of_queries(url, sql, " VALUES (");
+	
+	if (req.method() == web::http::methods::POST)
+		replace_minus_one_id_with_null(sql);
 	
 	return sql.append(")");
 }
@@ -190,4 +197,10 @@ std::string sql_builder::convert_to_sql_format(const std::string& json_style) {
 	boost::regex_search(body, val_result, val);
 
 	return key_result[0].str() + "='" + val_result[0].str() + "'";
+}
+
+void sql_builder::replace_minus_one_id_with_null(std::string & s)
+{
+	boost::regex minus_one_id("'-1'");
+	s = boost::regex_replace(s, minus_one_id, "NULL");
 }
