@@ -115,7 +115,7 @@ void sql_builder::add_pair_queries(const std::string &url, std::string &sql, con
 	sql.append(kew_word);
 	auto start = it;
 	for (; it != end; it++)
-		*start != *it ? sql.append(" AND " + wrap_by_quotation(*it)) : sql.append(wrap_by_quotation(*it));
+		start != it ? sql.append(" AND " + wrap_by_quotation(*it)) : sql.append(wrap_by_quotation(*it));
 }
 
 void sql_builder::add_value_of_queries(const std::string &url, std::string &sql, const char* kew_word) {
@@ -125,9 +125,8 @@ void sql_builder::add_value_of_queries(const std::string &url, std::string &sql,
 	const boost::sregex_token_iterator end;
 	sql.append(kew_word);
 	auto start = it;
-	for (; it != end; it++) {
-		*start != *it ? sql.append(", '" + *it + "'") : sql.append("'" + *it + "'");
-	}
+	for (; it != end; it++)
+		start != it ? sql.append(", '" + *it + "'") : sql.append("'" + *it + "'");
 }
 
 void sql_builder::add_path_hierarchy(const std::string &url, std::string &sql)
@@ -137,9 +136,8 @@ void sql_builder::add_path_hierarchy(const std::string &url, std::string &sql)
 	const boost::sregex_token_iterator end;
 
 	auto start = opath_itr;
-	for (; opath_itr != end; opath_itr++) {
-		*start != *opath_itr ? sql.append(*opath_itr + ", ") : sql.append(*opath_itr);
-	}
+	for (; opath_itr != end; opath_itr++)
+		start != opath_itr ? sql.append(*opath_itr + ", ") : sql.append(*opath_itr);
 }
 
 std::wstring sql_builder::wrap_by_quotation(const std::wstring& equation)
