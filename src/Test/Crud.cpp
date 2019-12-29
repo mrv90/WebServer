@@ -25,6 +25,7 @@ namespace Test {
 				.append_query(U("name=Mohsen")).append_query(U("family_name=Shiri")).append_query(U("birth_date=13710101"));
 			cli.make_request(methods::POST, req.to_string(), 0).then([](http_response response) {
 				EXPECT_EQ(response.status_code(), status_codes::Created);
+				//TODO add generated student_id in response
 			}).wait();
 		}
 		TEST_F(Crud, Student_OnSearching_Success) {
@@ -66,6 +67,7 @@ namespace Test {
 			auto req = uri_builder(local).append_path(U("course")).append_query(U("course_id=-1")).append_query(U("name=Geography"));
 			cli.make_request(methods::POST, req.to_string(), 0).then([](http_response response) {
 				EXPECT_EQ(response.status_code(), status_codes::Created);
+				//TODO add generated course_id in response
 			}).wait();
 		}
 		TEST_F(Crud, Course_OnSearching_Success) {
@@ -99,6 +101,7 @@ namespace Test {
 				.append_query(U("course_ref=1")).append_query(U("student_ref=2")).append_query(U("score_ref=1"));
 			cli.make_request(methods::POST, req.to_string(), 0).then([](http_response response) {
 				EXPECT_EQ(response.status_code(), status_codes::Created);
+				//TODO add generated class_id in response
 			}).wait();
 		}
 		TEST_F(Crud, Class_OnSearching_Success) {
@@ -133,6 +136,7 @@ namespace Test {
 				.append_query(U("class_ref=2")).append_query(U("student_ref=2")).append_query(U("grade=18"));
 			cli.make_request(methods::POST, req.to_string(), 0).then([](http_response response) {
 				EXPECT_EQ(response.status_code(), status_codes::Created);
+				//TODO add generated quiz_id in response
 			}).wait();
 		}
 		TEST_F(Crud, Quiz_OnSearching_Success) {
@@ -167,6 +171,7 @@ namespace Test {
 				.append_query(U("student_ref=2")).append_query(U("sem_avg=14")).append_query(U("mid_term=18")).append_query(U("final_term=11"));
 			cli.make_request(methods::POST, req.to_string(), 0).then([](http_response response) {
 				EXPECT_EQ(response.status_code(), status_codes::Created);
+				//TODO add generated score_id in response
 			}).wait();
 		}
 		TEST_F(Crud, Score_OnSearching_Success) {
