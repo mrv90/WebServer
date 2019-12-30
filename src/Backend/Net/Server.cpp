@@ -187,35 +187,41 @@ void BackEnd::Net::Server::handle_head(http_request req)
 		answer_request(req, status_codes::BadRequest);
 }
 
-void BackEnd::Net::Server::answer_request(const int query_status, const web::http::http_request & req, const web::json::value & resp)
+void BackEnd::Net::Server::answer_request(const int query_status, const web::http::http_request & req, const web::json::value & body)
 {
+	http_response resp;
+
 	switch (query_status) {
 	case (SQLITE_OK): {
-		if (req.method() == methods::GET)
-			req.reply(status_codes::OK, resp);
+		if (req.method() == methods::GET) {
+			resp = http_response(status_codes::OK);
+			resp.set_body(body);
+		}
 		else if (req.method() == methods::POST)
-			req.reply(status_codes::Created);
+			resp = http_response(status_codes::Created);
 		else if (req.method() == methods::PUT)
-			req.reply(status_codes::OK);
+			resp = http_response(status_codes::OK);
 		else if (req.method() == methods::PATCH)
-			req.reply(status_codes::OK);
+			resp = http_response(status_codes::OK);
 		else if (req.method() == methods::DEL)
-			req.reply(status_codes::OK);
+			resp = http_response(status_codes::OK);
 		else if (req.method() == methods::HEAD)
-			req.reply(status_codes::OK);
-		else if (req.method() == methods::OPTIONS)
-			req.reply(status_codes::OK, resp);
+			resp = http_response(status_codes::OK);
+		else if (req.method() == methods::OPTIONS) {
+			resp = http_response(status_codes::OK);
+			resp.set_body(body);
+		}
 	
 		std::wcout << "Result: " << (req.method() == methods::POST ? "Created" : "OK") << ";\n" 
-			<< "response: " << resp.serialize().c_str() << "." << endl;
+			<< "response: " << body.serialize().c_str() << "." << endl;
 	}
 		break;
 	case (SQLITE_MISUSE || SQLITE_ERROR):
-		req.reply(status_codes::BadRequest);
+		resp = http_response(status_codes::BadRequest);
 		std::wcout << "Result: BadRequest" << endl;
 		break;
 	case (SQLITE_INTERNAL):
-		req.reply(status_codes::InternalError);
+		resp = http_response(status_codes::InternalError);
 		std::wcout << "Result: InternalError" << endl;
 		break;
 	default:
@@ -223,12 +229,17 @@ void BackEnd::Net::Server::answer_request(const int query_status, const web::htt
 		break;
 	}
 
+	resp.headers().add(U("Access-Control-Allow-Origin"), U("*"));
+	req.reply(resp);
 	std::wcout << "------------------------------------------------------------------" << endl;
 }
 
 void BackEnd::Net::Server::answer_request(const web::http::http_request & req, const int http_code) {
+	http_response resp(http_code);
+	resp.headers().add(U("Access-Control-Allow-Origin"), U("*"));
 	std::wcout << "Result: " << http_code << endl;
-	req.reply(http_code);
+	
+	req.reply(resp);
 
 	std::wcout << "------------------------------------------------------------------" << endl;
 }

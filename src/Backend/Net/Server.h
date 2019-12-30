@@ -38,7 +38,7 @@ namespace BackEnd {
 			virtual void handle_options(http_request req);
 			virtual void handle_head(http_request req);
 
-			void answer_request(const int query_status, const web::http::http_request & req, const web::json::value & resp = NULL);
+			void answer_request(const int query_status, const web::http::http_request & req, const web::json::value & body = NULL);
 			void answer_request(const web::http::http_request & req, const int http_code);
 			
 			void print_current_date_time();
