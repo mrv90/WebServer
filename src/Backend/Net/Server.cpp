@@ -111,7 +111,7 @@ void BackEnd::Net::Server::handle_put(http_request req)
 			if (data_cntx.verify_query_and_data(chk_exist) == false)
 				answer_request(req, status_codes::NotFound);
 
-			std::string update = sql_builder().to_update_cmd(req, req.extract_json(true).get().as_string());
+			std::string update = sql_builder().to_update_cmd(req, req.extract_json(true).get().serialize());
 			answer_request(data_cntx.exe_cmd(update), req);
 		}
 		catch (const BackEnd::Data::exception& e)
