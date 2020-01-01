@@ -9,6 +9,7 @@ public:
 	~sql_builder();
 
 	std::string to_select_query(const web::http::http_request& req);
+	std::string to_select_key_without_minus_one_query(const web::http::http_request& req);
 	std::string to_create_or_replace_cmd(const web::http::http_request& req);
 	std::string to_update_cmd(const web::http::http_request& req, const std::wstring& json_style_body);
 	std::string to_delete_cmd(const web::http::http_request& req);
@@ -29,4 +30,5 @@ private:
 	std::wstring convert_to_sql_format(const std::wstring& json_style);
 	std::string convert_to_sql_format(const std::string& json_style);
 	void replace_minus_one_id_with_null(std::string& s);
+	void remove_minus_one_query_from_url(std::string& s);
 };

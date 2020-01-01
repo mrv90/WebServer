@@ -30,6 +30,23 @@ std::string sql_builder::to_select_query(const web::http::http_request& req)
 	return sql;
 }
 
+std::string sql_builder::to_select_key_without_minus_one_query(const web::http::http_request& req) {
+	std::string url = utility::conversions::utf16_to_utf8(req.relative_uri().to_string());
+	remove_minus_one_query_from_url(url);
+	
+	std::string sql("SELECT ");
+
+	add_root_path(url, sql, "");
+	sql.append("_id ");
+
+	add_root_path(url, sql, "FROM ");
+
+	if (!req.relative_uri().query().empty())
+		add_pair_queries(url, sql, " WHERE ");
+
+	return sql;
+}
+
 std::string sql_builder::to_create_or_replace_cmd(const web::http::http_request& req)
 {
 	std::string url = utility::conversions::utf16_to_utf8(req.relative_uri().to_string());
@@ -203,4 +220,9 @@ void sql_builder::replace_minus_one_id_with_null(std::string & s)
 {
 	boost::regex minus_one_id("'-1'");
 	s = boost::regex_replace(s, minus_one_id, "NULL");
+}
+
+void sql_builder::remove_minus_one_query_from_url(std::string& s) {
+	boost::regex minus_one_query("[a-zA-Z0-9]+_id=-1");
+	s = boost::regex_replace(s, minus_one_query, "");
 }
