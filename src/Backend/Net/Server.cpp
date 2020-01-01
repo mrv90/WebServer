@@ -368,9 +368,19 @@ bool BackEnd::Net::Server::contains_valid_queries(const web::http::http_request&
 
 bool BackEnd::Net::Server::contains_json_body(const web::http::http_request & req)
 {
-	auto received = req.body();
-	if (!json::value(received).is_null())
+	try
+	{
+		/*auto raw = req.extract_json(true).get();
+		web::json::value body = web::json::value::string(raw.is_string() ? raw.as_string() : json::value(raw).serialize());
+		req.set_body(body);
+
+		if (!body.is_null())*/
 		return true;
-	
-	return false;
+
+		/*return false;*/
+	}
+	catch (const std::exception&)
+	{
+		return false;
+	}
 }
