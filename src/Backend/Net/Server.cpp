@@ -213,7 +213,6 @@ void BackEnd::Net::Server::answer_request(const int query_status, const web::htt
 			resp = http_response(status_codes::Created);
 			resp.headers().add(U("Access-Control-Allow-Origin"), U("*"));
 			resp.set_body(body);
-			std::wcout << "response: " << body.serialize().c_str() << "." << endl;
 		}
 		else {
 			resp = http_response(status_codes::OK);
@@ -232,12 +231,12 @@ void BackEnd::Net::Server::answer_request(const int query_status, const web::htt
 		resp = http_response(status_codes::InternalError);
 		std::wcout << "Result: InternalError" << endl;
 		break;
-	default:
-		std::wcout << "Result: no result defined!" << endl;
-		break;
 	}
+	
+	std::wcout << "Response: " << (req.method() == methods::POST ? "Created" : "OK") << ";\n";
+	if (!body.is_null())
+		std::wcout << "message-body: " << body.serialize().c_str() << "." << endl;
 
-	std::wcout << "Result: " << (req.method() == methods::POST ? "Created" : "OK") << ";\n";
 	req.reply(resp);
 	std::wcout << "------------------------------------------------------------------" << endl;
 }
