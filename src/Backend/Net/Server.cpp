@@ -87,7 +87,14 @@ void BackEnd::Net::Server::handle_post(http_request req)
 			std::string chk_exist = sql_builder().to_select_query(req);
 			if (data_cntx.verify_data(chk_exist) == false) {
 				std::string create = sql_builder().to_create_or_replace_cmd(req);
-				answer_request(data_cntx.exe_cmd(create), req);
+				auto result = data_cntx.exe_cmd(create);
+				if (SQLITE_OK == result) {
+					std::string get = sql_builder().to_select_key_without_minus_one_query(req);
+					web::json::value resp{};
+					answer_request(data_cntx.exe_query(get, resp), req, resp);
+				}
+				else
+					answer_request(result, req);
 			}
 			else
 				answer_request(req, status_codes::Conflict); // duplicated data
