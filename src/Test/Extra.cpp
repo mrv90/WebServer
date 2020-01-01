@@ -30,5 +30,9 @@ namespace Test {
 				}).wait();
 			}).wait();
 		}
+
+		//TODO check processing multiple parallel request.. execption raises??
+
+		//TODO If uri is illegal, we will have exceptions??
 	}
 }
