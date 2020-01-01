@@ -111,7 +111,9 @@ void BackEnd::Net::Server::handle_put(http_request req)
 			if (data_cntx.verify_query_and_data(chk_exist) == false)
 				answer_request(req, status_codes::NotFound);
 
-			std::string update = sql_builder().to_update_cmd(req, req.extract_json(true).get().as_string());
+			auto raw = req.extract_json(true).get();
+			std::wstring body = raw.is_string() ? raw.as_string() : json::value(raw).serialize();
+			std::string update = sql_builder().to_update_cmd(req, body);
 			answer_request(data_cntx.exe_cmd(update), req);
 		}
 		catch (const BackEnd::Data::exception& e)
@@ -132,7 +134,7 @@ void BackEnd::Net::Server::handle_patch(http_request req)
 {
 	print_current_date_time();
 	print_requst_date(req);
-	
+
 	if (is_a_valid_request(req)) {
 		std::string update = sql_builder().to_update_cmd(req, req.extract_json(true).get().as_string());
 		answer_request(data_cntx.exe_cmd(update.c_str()), req);
@@ -237,7 +239,7 @@ void BackEnd::Net::Server::answer_request(const web::http::http_request & req, c
 	http_response resp(http_code);
 	resp.headers().add(U("Access-Control-Allow-Origin"), U("*"));
 	std::wcout << "Result: " << http_code << endl;
-	
+
 	req.reply(resp);
 
 	std::wcout << "------------------------------------------------------------------" << endl;
@@ -276,16 +278,16 @@ void BackEnd::Net::Server::print_requst_date(const web::http::http_request& req)
 bool BackEnd::Net::Server::is_a_valid_request(const web::http::http_request& req) {
 	if (req.method() == methods::GET)
 		return must_have_atleast_one_path(req) && contains_valid_pathes(req)
-			&& contains_valid_queries(req);
+		&& contains_valid_queries(req);
 	else if (req.method() == methods::POST)
 		return must_have_atleast_one_path(req) && contains_valid_pathes(req);
 	else if (req.method() == methods::PUT || req.method() == methods::PATCH)
 		return must_have_atleast_one_path(req) && contains_valid_pathes(req)
-			&& must_have_atleast_one_query(req) && contains_valid_queries(req)
-			&& contains_json_body(req);
+		&& must_have_atleast_one_query(req) && contains_valid_queries(req)
+		&& contains_json_body(req);
 	else if (req.method() == methods::DEL)
 		return must_have_atleast_one_path(req) && contains_valid_pathes(req)
-			&& must_have_atleast_one_query(req) && contains_valid_queries(req);
+		&& must_have_atleast_one_query(req) && contains_valid_queries(req);
 	else if (req.method() == methods::HEAD || req.method() == methods::OPTIONS)
 		return could_have_some_pathes(req);
 	else {
