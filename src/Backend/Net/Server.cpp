@@ -193,29 +193,28 @@ void BackEnd::Net::Server::answer_request(const int query_status, const web::htt
 
 	switch (query_status) {
 	case (SQLITE_OK): {
-		if (req.method() == methods::GET) {
+		if (req.method() == methods::OPTIONS) {
 			resp = http_response(status_codes::OK);
-			resp.set_body(body);
+			resp.headers().add(U("Allow"), U("GET, POST, PUT, PATCH, DELETE, OPTIONS, HEAD"));
+			resp.headers().add(U("Access-Control-Allow-Origin"), U("*"));
+			resp.headers().add(U("Access-Control-Allow-Methods"), U("GET, POST, PUT, PATCH, DELETE, OPTIONS, HEAD"));
+			resp.headers().add(U("Access-Control-Allow-Headers"), U("Content-Type"));
 		}
-		else if (req.method() == methods::POST)
+		else if (req.method() == methods::POST) {
 			resp = http_response(status_codes::Created);
-		else if (req.method() == methods::PUT)
-			resp = http_response(status_codes::OK);
-		else if (req.method() == methods::PATCH)
-			resp = http_response(status_codes::OK);
-		else if (req.method() == methods::DEL)
-			resp = http_response(status_codes::OK);
-		else if (req.method() == methods::HEAD)
-			resp = http_response(status_codes::OK);
-		else if (req.method() == methods::OPTIONS) {
-			resp = http_response(status_codes::OK);
+			resp.headers().add(U("Access-Control-Allow-Origin"), U("*"));
 			resp.set_body(body);
+			std::wcout << "response: " << body.serialize().c_str() << "." << endl;
 		}
-	
-		std::wcout << "Result: " << (req.method() == methods::POST ? "Created" : "OK") << ";\n" 
-			<< "response: " << body.serialize().c_str() << "." << endl;
+		else {
+			resp = http_response(status_codes::OK);
+			resp.headers().add(U("Access-Control-Allow-Origin"), U("*"));
+
+			if (req.method() == methods::GET)
+				resp.set_body(body);
+		}
 	}
-		break;
+					  break;
 	case (SQLITE_MISUSE || SQLITE_ERROR):
 		resp = http_response(status_codes::BadRequest);
 		std::wcout << "Result: BadRequest" << endl;
@@ -229,7 +228,7 @@ void BackEnd::Net::Server::answer_request(const int query_status, const web::htt
 		break;
 	}
 
-	resp.headers().add(U("Access-Control-Allow-Origin"), U("*"));
+	std::wcout << "Result: " << (req.method() == methods::POST ? "Created" : "OK") << ";\n";
 	req.reply(resp);
 	std::wcout << "------------------------------------------------------------------" << endl;
 }
