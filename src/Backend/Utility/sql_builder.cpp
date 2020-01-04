@@ -205,15 +205,21 @@ std::wstring sql_builder::convert_to_sql_format(const std::wstring& json_style) 
 
 std::string sql_builder::convert_to_sql_format(const std::string& json_style) {
 	std::string body = std::string(json_style.begin(), json_style.end());
-	boost::regex key("[a-zA-Z0-9_]+(?=\":)");
-	boost::regex val("[a-zA-Z0-9_]+(?=(\"}|}))");
-	boost::smatch key_result;
-	boost::smatch val_result;
+	const boost::regex key("[a-zA-Z0-9_]+(?=\":)");
+	const boost::regex val("[a-zA-Z0-9_]+(?=(\",|\"}|}))");
+	boost::sregex_token_iterator key_it(body.begin(), body.end(), key, 0);
+	boost::sregex_token_iterator val_it(body.begin(), body.end(), val, 0);
+	boost::sregex_token_iterator end;
 
-	boost::regex_search(body, key_result, key);
-	boost::regex_search(body, val_result, val);
+	std::string result;
+	for (; key_it != end && val_it != end; ) {
+		result.append(!result.empty() ? (", " + *key_it + "='" + *val_it + "'") : (*key_it + "='" + *val_it + "'"));
 
-	return key_result[0].str() + "='" + val_result[0].str() + "'";
+		++key_it;
+		++val_it;
+	}
+
+	return result;
 }
 
 void sql_builder::replace_minus_one_id_with_null(std::string & s)
