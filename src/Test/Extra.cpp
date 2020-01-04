@@ -31,8 +31,16 @@ namespace Test {
 			}).wait();
 		}
 
-		//TODO check processing multiple parallel request.. execption raises??
+		// TODO: OK for TRACE: create a loopback for the request message
 
-		//TODO If uri is illegal, we will have exceptions??
+		// TODO: stress_test to produce service_not_available
+
+		// TODO: authentication (base64 encoded not plain text)
+
+		// TODO: using cookies for authentication
+
+		// TODO: authorization
+
+		// TODO: caching (on front end??)
 	}
 }
