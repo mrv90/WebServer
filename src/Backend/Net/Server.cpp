@@ -91,7 +91,7 @@ void BackEnd::Net::Server::handle_post(http_request req)
 				if (SQLITE_OK == result) {
 					std::string get = sql_builder().to_select_key_without_minus_one_query(req);
 					web::json::value resp{};
-					answer_request(data_cntx.exe_query(get, resp), req, resp);
+					answer_request(data_cntx.exe_query_scalar(get, resp), req, resp);
 				}
 				else
 					answer_request(result, req);

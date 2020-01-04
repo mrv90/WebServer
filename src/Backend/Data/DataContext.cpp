@@ -140,6 +140,52 @@ int BackEnd::Data::DataContext::exe_query(const std::string& query, web::json::v
 	return SQLITE_OK;
 }
 
+int BackEnd::Data::DataContext::exe_query_scalar(const std::string & query, web::json::value & resp)
+{
+	int ret = -1;
+	sqlite3_stmt* stmt = NULL;
+
+	if (SQLITE_OK != (ret = sqlite3_prepare_v2(con, query.c_str(), -1, &stmt, NULL))) {
+		auto err = sqlite3_errmsg(con);
+		return ret;
+	}
+
+	utility::stringstream_t istrm;
+	if (SQLITE_ROW == (ret = sqlite3_step(stmt))) {
+		istrm << L"{";
+
+		switch (sqlite3_column_type(stmt, 0))
+		{
+		case (SQLITE_INTEGER):
+			istrm << L"\"" << sqlite3_column_name(stmt, 0) << L"\": " << sqlite3_column_int(stmt, 0);
+			break;
+		case (SQLITE_TEXT):
+			istrm << L"\"" << sqlite3_column_name(stmt, 0) << L"\": \"" << (const char*)sqlite3_column_text(stmt, 0) << L"\"";
+			break;
+		case (SQLITE_FLOAT):
+			istrm << L"\"" << sqlite3_column_name(stmt, 0) << L"\": " << sqlite3_column_double(stmt, 0);
+			break;
+		case (SQLITE_BLOB):
+			istrm << L"\"" << sqlite3_column_name(stmt, 0) << L"\": \"" << sqlite3_column_blob(stmt, 0) << L"\"";
+			break;
+		case (SQLITE_NULL): // end-of-data flag
+			break;
+		default:
+			istrm << L"\"" << sqlite3_column_name(stmt, 0) << L"\": \"" << sqlite3_column_value(stmt, 0) << L"\"";
+			break;
+		}
+		
+		istrm << L"}";
+	}
+	
+	resp = web::json::value::parse(istrm);
+
+	if (NULL != stmt)
+		sqlite3_finalize(stmt);
+
+	return SQLITE_OK;
+}
+
 bool BackEnd::Data::DataContext::verify_query_and_data(const std::string& query) {
 	int ret = -1;
 	sqlite3_stmt* stmt = NULL;
