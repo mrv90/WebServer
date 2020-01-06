@@ -125,5 +125,7 @@ namespace Test {
 		}
 
 		// TODO: check processing multiple parallel request.. execption raises??
+
+		// TODO: test against thread-safety ... maybe we have critical sections that should be treated.
 	}
 }
