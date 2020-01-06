@@ -95,6 +95,13 @@ namespace Test {
 			}).wait();
 		}
 
+		TEST_F(Smoke, Student_OnIllegalRquest2_BadRequest) {
+			auto req = uri_builder(local).append_path(U("student")).append_query(U("student_id=[object%20Object]")); // copied from real request ! 
+			cli.make_request(methods::OPTIONS, req.to_string(), 0).then([](http_response response) {
+				EXPECT_EQ(response.status_code(), status_codes::BadRequest);
+			}).wait();
+		}
+
 		TEST_F(Smoke, Student_OnDeletingNotExisting_NotFound) {
 			auto req = uri_builder(local).append_path(U("student")).append_query(U("student_id=10"));
 			cli.make_request(methods::DEL, req.to_string(), 0).then([](http_response response) {
@@ -117,8 +124,6 @@ namespace Test {
 			}).wait();
 		}
 
-		// TODO: bad uri will cause exceptions..
-		
-		// TODO check processing multiple parallel request.. execption raises??
+		// TODO: check processing multiple parallel request.. execption raises??
 	}
 }
